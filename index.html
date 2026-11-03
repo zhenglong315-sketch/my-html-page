@@ -90,19 +90,63 @@ td:first-child{font-weight:500;white-space:nowrap}
 .note{font-size:.8rem;color:var(--muted);margin:.5rem 0;padding:.6rem .9rem;
   background:oklch(0.97 0.006 240);border-radius:6px;border:1px solid var(--border);
   font-style:italic}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.table-wrap{margin:1rem 0;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border-radius:8px;box-shadow:0 1px 4px oklch(0 0 0/.06)}
+.table-wrap table{margin:0;box-shadow:none}
+.menu-btn{display:none;flex-shrink:0;width:38px;height:38px;border:none;border-radius:6px;
+  background:oklch(0.28 0.05 258);color:var(--hdr-txt);font-size:1.15rem;cursor:pointer;
+  align-items:center;justify-content:center}
+.sidebar-mask{display:none}
 @media(max-width:800px){
-  :root{--sw:0px}
-  .sidebar{display:none}
-  .main{padding:1.5rem}
+  :root{--hh:60px}
+  body{font-size:14px;line-height:1.7}
+  .site-header{padding:0 .9rem;gap:.6rem}
+  .site-header h1{font-size:.88rem;line-height:1.3;display:-webkit-box;
+    -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .site-header .badge{font-size:.62rem;padding:.15rem .4rem}
+  .menu-btn{display:flex}
+  .sidebar{position:fixed;top:var(--hh);left:0;bottom:0;height:auto;width:260px;max-width:80vw;
+    z-index:190;transform:translateX(-100%);transition:transform .22s ease;
+    box-shadow:4px 0 16px oklch(0 0 0/.15)}
+  body.nav-open .sidebar{transform:none}
+  .sidebar-mask{position:fixed;inset:var(--hh) 0 0 0;background:oklch(0 0 0/.35);z-index:180}
+  body.nav-open .sidebar-mask{display:block}
+  body.nav-open{overflow:hidden}
+  .main{padding:1.25rem 1rem 2rem;max-width:100%}
+  .section{margin-bottom:2.25rem}
+  .section-title{font-size:1.05rem;margin-bottom:1.1rem}
+  .section-subtitle{font-size:.95rem;margin:1.25rem 0 .6rem}
+  .meta-row{flex-direction:column;gap:.3rem;padding:.7rem .9rem}
+  .card{padding:1rem 1rem}
+  table{font-size:.8rem}
+  thead th{padding:.5rem .65rem;font-size:.72rem;white-space:nowrap}
+  td{padding:.5rem .65rem}
+  td:first-child{white-space:normal;min-width:4.5em}
+  table.mid{min-width:560px}
+  table.wide{min-width:720px}
+  .phase{grid-template-columns:repeat(2,1fr);gap:.7rem}
+  .phase-card{padding:.8rem}
+  .arch-box{padding:1rem;font-size:.76rem;line-height:1.75}
+  .arch-box div{padding:.25rem 0}
+  .law-list li{gap:.6rem}
+}
+@media(max-width:420px){
+  .site-header .badge{display:none}
+}
+@media(max-width:340px){
+  .phase{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <header class="site-header">
+  <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
   <h1>金融渠道运营部 AI 组织变革与业务流程再造提案</h1>
   <span class="badge">V2.0 · 2026-10-28</span>
 </header>
 <div class="layout">
+<div class="sidebar-mask" id="sidebarMask"></div>
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-lbl">目录</div>
   <a href="#s1">一、提案摘要</a>
@@ -134,14 +178,14 @@ td:first-child{font-weight:500;white-space:nowrap}
   <p><strong>一句话主张</strong>：不把 AI 当外挂工具分发给各部门，而是把 AI（智能体）当作新的劳动力要素，<strong>在不动现有组织架构、不改现行考核制度的前提下</strong>，先用一到两个场景把 AI 工作流跑通、拿到实测数据，再横向推广——部门是能力池，工作流产品化（有触发、有护栏、有回写、有指标）。</p>
 </div>
 <h3 class="section-subtitle">项目结构（三层解耦）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>层</th><th>定位</th><th>验收</th></tr></thead>
 <tbody>
 <tr><td><strong>主项目</strong>：BU AI 组织变革</td><td>制度与协作形态的演进，以试点产出为依据，不预设结论</td><td>90 天试点数据 + 组织形态建议报告</td></tr>
 <tr><td><strong>试点项目</strong>：1–2 个场景先跑通</td><td>本提案 90 天的核心交付</td><td>试点场景端到端跑通，有改前/改后实测</td></tr>
 <tr><td><strong>重点业务</strong>：新分期商城独立 APP</td><td>BU 确定的重点业务，独立立项、独立节奏，可复用试点产出；列为二期试点候选，不与本变革的验收绑定</td><td>按业务自身里程碑</td></tr>
 </tbody>
-</table>
+</table></div>
 <div class="card warn">
   <p><strong>解耦条款</strong>：分期商城若延期或调整，不影响变革试点验收；变革试点不占用新业务开发人力；两者共用一套工作流方法（四件套）与资产库（提示词库、知识库），但任务、节奏、验收完全分开。</p>
 </div>
@@ -153,27 +197,27 @@ td:first-child{font-weight:500;white-space:nowrap}
 <section class="section" id="s2">
 <h2 class="section-title">二、问题定义：为什么"每人配个 AI"不算变革</h2>
 <h3 class="section-subtitle">2.1 两个必须面对的数据</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>数据</th><th>含义</th></tr></thead>
 <tbody>
 <tr><td>80% 员工称 AI 提升了个人生产力，但只有 37% 的企业看到 EBIT 正向影响，仅 6% 被判定为 AI 高绩效</td><td>个人提效 ≠ 组织增效，红利漏在部门交接处</td></tr>
 <tr><td>6% 高绩效企业中近 3/4 在大幅重设工作流；其余企业仅约 1/4</td><td>分水岭不在用什么工具，在<strong>有没有改工作本身的流转方式</strong></td></tr>
 </tbody>
-</table>
+</table></div>
 <p class="note">麦肯锡 2026 State of AI 调查；二手转引，原始报告未独立核验，仅作方向性参考。</p>
 <h3 class="section-subtitle">2.2 本 BU 的低效来源（初步判断，待基线验证）</h3>
 <div class="card warn">
   <p><strong>本节证据状态</strong>：四项基础条件经 BU 负责人确认（2026-10-27，口头）；三条典型表现为基于各部门职责的初步判断，<strong>尚未实地验证，待 D15 基线回收后确认或修正</strong>。</p>
   <p style="margin-top:.5rem">四项基础条件（BU 负责人确认）：系统相通、客户名单共享且去重、暂无对外投放、周报月报体系齐全。</p>
 </div>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>#</th><th>低效来源（待验证）</th><th>典型表现（待验证）</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>人工转述与重复产出</td><td>客户诉求在客服→会员→产品/渠道间人工转述〔待核实〕；合规标准多处分别送审〔待核实〕</td></tr>
 <tr><td>2</td><td>跨单元排期等待</td><td>设计→前端→后端接力等待〔工时数据待测〕</td></tr>
 <tr><td>3</td><td>外部放行等待</td><td>合规/风控/资产方介入时点〔待核实〕</td></tr>
 </tbody>
-</table>
+</table></div>
 <p><strong>对应结论</strong>：试点期不预设"哪里低效"，只要求<strong>基线数据说话</strong>——试点场景的改前/改后实测，就是低效是否存在的直接证据。</p>
 </section>
 
@@ -181,16 +225,16 @@ td:first-child{font-weight:500;white-space:nowrap}
 <section class="section" id="s3">
 <h2 class="section-title">三、目标组织形态：部门不动，动的是"任务怎么组"</h2>
 <h3 class="section-subtitle">3.1 核心原则：判断-执行-校验的新分工</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>主体</th><th>优势区</th><th>在本 BU 的落点</th></tr></thead>
 <tbody>
 <tr><td><strong>人</strong></td><td>判断：取舍、责任、边界</td><td>合规终审、适当性判断、额度与定价、对外承诺、策略决策</td></tr>
 <tr><td><strong>智能体</strong></td><td>执行：信息吞吐、工具调用、7×24</td><td>取数、初稿、改写、摘要、质检、监控、归类、提醒</td></tr>
 <tr><td><strong>系统</strong></td><td>校验：记录、审计、复盘</td><td>留痕、对账、指标回写、异常告警</td></tr>
 </tbody>
-</table>
+</table></div>
 <h3 class="section-subtitle">3.2 两阶段推进，试点期零制度成本</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th></th><th>试点期（90 天内）</th><th>目标形态（试点验证后评估）</th></tr></thead>
 <tbody>
 <tr><td>组队方式</td><td><strong>域负责人制</strong>：试点场景由所在域负责，配一名试点协调人（<strong>小宋</strong>）跨域拉通</td><td>能力池 + 业务小队（新业务立项时按需组建）</td></tr>
@@ -198,7 +242,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>组织架构</td><td>现有 6 部门，不动</td><td>同左</td></tr>
 <tr><td>制度依赖</td><td><strong>零</strong>——不需要任何审批即可启动</td><td>视试点结论另行提案</td></tr>
 </tbody>
-</table>
+</table></div>
 <div class="card highlight">
   <p><strong>试点期两条铁律</strong></p>
   <ul class="law-list">
@@ -207,14 +251,14 @@ td:first-child{font-weight:500;white-space:nowrap}
   </ul>
 </div>
 <h3 class="section-subtitle">3.3 三档提效口径（各部门报数标准，防虚报）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>口径</th><th>定义</th><th>测量方式</th></tr></thead>
 <tbody>
 <tr><td>周期缩短</td><td>触发到交付的时间</td><td>同一流程改前/改后实测</td></tr>
 <tr><td>返工减少</td><td>一次通过率</td><td>统计期内返工率</td></tr>
 <tr><td>产能提升</td><td>同等人力单位产出</td><td>产出量对比</td></tr>
 </tbody>
-</table>
+</table></div>
 <p>不接受无基线、无测量方式的"效率明显提升"类表述。<strong>所有目标值在基线回收后设定，本提案不预设具体数字。</strong></p>
 </section>
 
@@ -230,7 +274,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <div class="phase-card"><h4>5. 不依赖新系统</h4><p>用现有系统与已批 AI 工具即可运行</p></div>
 </div>
 <h3 class="section-subtitle">4.2 候选场景对比</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>候选场景</th><th>所在域</th><th>可逆</th><th>指标</th><th>单域闭环</th><th>依赖</th><th>评估</th></tr></thead>
 <tbody>
 <tr><td><strong>A 周/月报自动生成</strong></td><td>数据分析</td><td><span class="tag tag-green">✅</span></td><td>✅ 出数耗时，现成</td><td><span class="tag tag-green">✅</span></td><td>无</td><td><span class="tag tag-star">★ 试点一</span> 最安全、指标现成、四周内可见数</td></tr>
@@ -240,15 +284,15 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>E 分期商城交付线</td><td>全 BU</td><td><span class="tag tag-red">❌ 部分</span></td><td>✅</td><td><span class="tag tag-red">❌</span></td><td>依赖门禁前置 + 供应商后台（新系统）</td><td><span class="tag tag-blue">二期试点候选</span>（详见 4.4）</td></tr>
 <tr><td>F 分层与名单自动更新</td><td>会员运营</td><td><span class="tag tag-green">✅</span></td><td>✅</td><td><span class="tag tag-green">✅</span></td><td>分层规则变更须人审（见 6.3）</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 <h3 class="section-subtitle">4.3 推荐组合（待 BU 负责人定）</h3>
-<table>
+<div class="table-wrap"><table class="mid">
 <thead><tr><th>试点</th><th>推荐</th><th>理由</th><th>备选</th></tr></thead>
 <tbody>
 <tr><td>试点一</td><td><strong>A 周/月报自动生成</strong>（数据分析域）</td><td>五条标准全满足；出数耗时当天可测基线；产出（报表）全 BU 的人都能看见，宣传价值最大</td><td>—</td></tr>
 <tr><td>试点二</td><td><strong>C 合规预检</strong> 或 <strong>B 通话摘要</strong>（二选一）</td><td>C 的下游收益最直观（送审返工减少）；B 的数据合规问题若两周内定不了工具形态，则选 C</td><td>均不满足则试点二顺延，只跑试点一</td></tr>
 </tbody>
-</table>
+</table></div>
 <h3 class="section-subtitle">4.4 分期商城作为二期试点候选</h3>
 <div class="card">
 <p>分期商城是 BU 重点业务，独立立项、按业务自身节奏推进。它<strong>具备成为第二个 Mission 小队试点的一切条件</strong>，但当前不满足试点五条标准中的 2、3、5（依赖门禁前置、供应商后台新建、跨全 BU），故列为<strong>二期试点候选</strong>：</p>
@@ -269,7 +313,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <div class="l1">L1 BU 共用底座（1 套，试点期最小集）—— 提示词库 · 知识库</div>
 </div>
 <h3 class="section-subtitle">L1 共用底座（九域共用，防止各域重复采购与重复建设）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>底座组件</th><th>试点期（最小集）</th><th>建设责任</th></tr></thead>
 <tbody>
 <tr><td>专家级提示词库</td><td>试点场景所需提示词（试点一约 3 条起步）</td><td>试点所在域出场景，BU 统一维护</td></tr>
@@ -277,10 +321,10 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>高频智能体</td><td>试点场景所需 1–2 个（先以"人工触发 + 已批工具"方式运行，不建平台）</td><td>BU 统一定义</td></tr>
 <tr><td>信息雷达</td><td>二期再建</td><td>—</td></tr>
 </tbody>
-</table>
+</table></div>
 <p>试点期 L1 底座只取<strong>提示词库</strong>与<strong>知识库</strong>两件作为最小集，其余组件随横向扩展逐步加入。</p>
 <h3 class="section-subtitle">每条工作流的产品化要求（四件套，缺一不算建成）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>要件</th><th>含义</th><th>反例</th></tr></thead>
 <tbody>
 <tr><td><span class="tag tag-blue">触发</span></td><td>什么事件自动启动</td><td>"有空的时候跑一下"</td></tr>
@@ -288,7 +332,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td><span class="tag tag-green">回写</span></td><td>结果写回系统，形成积累</td><td>产出散落在个人电脑里</td></tr>
 <tr><td><span class="tag tag-yellow">指标</span></td><td>周期/返工/往返可测</td><td>"大家都说好用"</td></tr>
 </tbody>
-</table>
+</table></div>
 <div class="card highlight"><p><strong>"建成"的判定标准</strong>：跑通 ≥3 次真实任务，且产出被下游接受 ≥1 次。</p></div>
 </section>
 
@@ -298,27 +342,27 @@ td:first-child{font-weight:500;white-space:nowrap}
 <p class="note">图例：HITL 档位 —— 🔴 人审后执行（高风险）/ 🟡 AI 执行人事后查（中风险）/ 🟢 全自动（低风险）<br>试点期只跑第四节选定的 1–2 条；其余为场景库，供横向扩展阶段按同一模板逐域启用。</p>
 
 <h3 class="section-subtitle">6.1 运营部 · 数据分析</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>周/月报自动生成</td><td>取数、清洗、图表、初稿</td><td>口径定义、结论判断</td><td>🟡</td><td>出数耗时（目标值待基线设定）</td><td><span class="tag tag-star">★ 试点一</span></td></tr>
 <tr><td>异常监控与归因</td><td>各渠道引流/开户/入金/成交异常识别、初步归因、同步风控线索</td><td>确认"是否真异常"、处置决策</td><td>🟡</td><td>异常发现→同步时长</td><td>二期</td></tr>
 <tr><td>转化漏斗问答</td><td>自然语言查数、节点转化率下钻</td><td>增长点判断</td><td>🟢</td><td>取数需求排队时长</td><td>二期（需先定数据权限）</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.2 运营部 · 自媒体</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>合规预检</td><td>收益承诺、误导表述自动拦截并标注</td><td>终审与责任承担</td><td>🔴</td><td>送审返工率（基线待测）</td><td><span class="tag tag-blue">试点二候选</span></td></tr>
 <tr><td>内容生产流水线</td><td>选题清单、科普初稿、一稿多平台改写</td><td>调性把关、事实核对、合规终审</td><td>🔴</td><td>单条全链路耗时</td><td>二期</td></tr>
 <tr><td>评论运营</td><td>评论分类、常见问题标准答复建议</td><td>敏感问题回复、导流话术判断</td><td>🟡</td><td>答疑响应时长</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.3 运营部 · 会员运营</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>分层与名单</td><td>客户分层自动更新、到期/续投名单生成与优先级排序</td><td>分层策略、触达时机判断</td><td>执行 🟢 / 规则变更 🔴</td><td>名单更新频率</td><td>二期</td></tr>
@@ -326,10 +370,10 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>推送内容编排</td><td>产品资讯/投教内容的分层选配与推送编排</td><td>内容适配与时机判断</td><td>🟡</td><td>推送点击率</td><td>二期</td></tr>
 <tr><td>诉求归类回传</td><td>客户诉求自动分类、同步产品/渠道端</td><td>复杂个案处理</td><td>🟡</td><td>诉求闭环率</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.4 设计部</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>原型与交互设计</td><td>根据 PRD 生成原型设计图初稿、交互稿初稿与多方案变体，复用历史组件</td><td>交互与体验判断、品牌一致性终审</td><td>🟡</td><td>需求到交互稿周期</td><td>二期</td></tr>
@@ -337,86 +381,86 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>营销素材自检</td><td>必备要素（风险提示位、披露位）自动检查</td><td>终审</td><td>🔴</td><td>返工率</td><td>二期</td></tr>
 <tr><td>设计资产库</td><td>组件沉淀、复用检索</td><td>收录标准判断</td><td>🟢</td><td>复用率</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.5 产品部</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>需求文档辅助</td><td>文档初稿、验收标准草拟、竞品功能对照</td><td>需求取舍与优先级</td><td>🟡</td><td>需求评审轮次</td><td>二期</td></tr>
 <tr><td>用户反馈洞察</td><td>反馈聚类、JTBD 提炼、优先级建议</td><td>采纳决策</td><td>🟡</td><td>需求变更率</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.6 技术部 · 前端</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>页面开发</td><td>根据 PRD 与设计交互稿的组件化页面开发：代码生成、样式还原自动走查、活动页/H5 快速搭建</td><td>架构设计、还原度与交互细节验收</td><td>🟡</td><td>单页面工时</td><td>二期</td></tr>
 <tr><td>埋点自检</td><td>埋点覆盖与上报异常自动检查</td><td>埋点方案定义</td><td>🟢</td><td>埋点缺失率</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 <p class="note"><strong>协作链</strong>：产品 PRD → 设计（原型图/交互稿）→ 前端（页面开发）→ 后端（业务逻辑与接口）。PRD 与设计交互稿是前端开工的两项前置输入，缺一即形成等待。</p>
 
 <h3 class="section-subtitle">6.7 技术部 · 后端</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>接口文档与单测</td><td>接口文档生成、单测生成</td><td><strong>资金/交易/权限逻辑必须人写人审</strong></td><td>🔴</td><td>接口交付周期</td><td>二期</td></tr>
 <tr><td>日志异常归因</td><td>错误日志聚类、初步归因</td><td>修复决策</td><td>🟡</td><td>故障定位时长</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.8 电销客服部</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>通话摘要与工单</td><td>通话/进线摘要自动生成、工单自动创建流转</td><td>工单处置、销售承诺把关</td><td>🟡</td><td>单通处理时长</td><td><span class="tag tag-blue">试点二候选</span>（前提：数据方案先定）</td></tr>
 <tr><td>话术提示</td><td>实时话术建议（含合规提示）</td><td>异议处理、承诺判断</td><td>🔴</td><td>一次解决率</td><td>二期</td></tr>
 <tr><td>全量质检</td><td>100% 通话质检替代抽检、违规自动标记</td><td>违规裁定与处罚</td><td>🟡</td><td>质检覆盖率</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">6.9 市场运营部</h3>
-<table>
+<div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
 <tr><td>上架材料自检</td><td>申报材料清单齐套校验、常见被拒原因预检、多市场差异对照</td><td>材料真实性、对外沟通</td><td>🔴</td><td>一次提审通过率</td><td>二期</td></tr>
 <tr><td>渠道情报雷达</td><td>竞品渠道模式、渠道政策变化监测简报</td><td>准入判断</td><td>🟢</td><td>简报周期</td><td>二期</td></tr>
 <tr><td>渠道效果分析</td><td>渠道引流/开户/入金数据归因分析</td><td>预算与准入决策</td><td>🟡</td><td>渠道评估周期</td><td>二期</td></tr>
 </tbody>
-</table>
+</table></div>
 <div class="card danger"><p><strong>闸门规则</strong>：任何场景立项时必须回答——"这条提效让哪个下游环节少做一件事？"答不出的，归为个人效率工具，不计入 BU 变革成果。</p></div>
 </section>
 
 <!-- 七、跨部门流程再造 -->
 <section class="section" id="s7">
 <h2 class="section-title">七、跨部门流程再造（L3，二期规划，本期只做基线记录）</h2>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>流程</th><th>一期（90 天内）</th><th>二期（横向扩展后）</th></tr></thead>
 <tbody>
 <tr><td>客户诉求闭环（客服→会员→产品/渠道）</td><td>仅记录现状基线：诉求量、闭环时长、往返次数</td><td>事件驱动改造：工单自动创建→自动路由→状态机→"已完成"以客户确认为准</td></tr>
 <tr><td>合规送审通道（四路送审）</td><td>试点二若选 C：只做红线词库与机检试点</td><td>四路统一预检入口；往返目标与合规部门共商设定</td></tr>
 <tr><td>新业务交付线（分期商城）</td><td>不占用变革试点资源</td><td>若立项：Mission 小队 + 契约先行 + 门禁前置（详见 4.4）</td></tr>
 </tbody>
-</table>
+</table></div>
 </section>
 
 <!-- 八、AI 治理与红线 -->
 <section class="section" id="s8">
 <h2 class="section-title">八、AI 治理与人的红线</h2>
 <h3 class="section-subtitle">8.1 三层监督（按风险定档，全 BU 统一语言）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>档位</th><th>机制</th><th>适用</th></tr></thead>
 <tbody>
 <tr><td>🔴 Human-in-the-Loop</td><td>AI 生成 → 人审 → 批准才执行</td><td>对外内容、费率与披露、话术终审、资金结算、分层规则变更</td></tr>
 <tr><td>🟡 Human-on-the-Loop</td><td>AI 执行 → 人事后检查 → 可回滚</td><td>报表、摘要、归类、质检标记</td></tr>
 <tr><td>🟢 Human-out-of-the-Loop</td><td>全自动，异常才报警</td><td>名单日常更新、埋点自检、监控提醒</td></tr>
 </tbody>
-</table>
+</table></div>
 <p><strong>判断准绳</strong>：可逆→自动化，不可逆→人确认。</p>
 <h3 class="section-subtitle">8.2 五条不可让渡的红线</h3>
-<table>
+<div class="table-wrap"><table class="mid">
 <thead><tr><th>#</th><th>红线</th><th>适用范围</th><th>理由</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>适当性与风险揭示的最终判断</td><td>存量理财业务</td><td>监管要求机构担责</td></tr>
@@ -425,9 +469,9 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>4</td><td>征信授权流程的呈现方式</td><td>分期商城（二期）</td><td>必须单独、明示、可撤回</td></tr>
 <tr><td>5</td><td>资金结算指令</td><td>两业务通用</td><td>AI 只做对账建议，不下资金指令</td></tr>
 </tbody>
-</table>
+</table></div>
 <h3 class="section-subtitle">8.3 数据安全底线</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>措施</th><th>要求</th></tr></thead>
 <tbody>
 <tr><td>工具白名单</td><td>只用 BU 批准的 AI 工具，禁用未审批工具处理客户数据（防 Shadow AI）</td></tr>
@@ -435,7 +479,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td><strong>客户数据类场景的前置条件</strong></td><td>凡涉及客户数据的工作流（如通话摘要），<strong>立项前必须先确定</strong>：工具形态（云端 API / 本地部署）、脱敏方案、留痕方式。<strong>方案未定，场景不启动</strong></td></tr>
 <tr><td>留痕</td><td>所有 AI 参与的对外产出，保留生成与审核记录</td></tr>
 </tbody>
-</table>
+</table></div>
 </section>
 
 <!-- 九、90 天实施计划 -->
@@ -449,7 +493,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 </div>
 
 <h3 class="section-subtitle">阶段一：提案定稿与试点立项（D1–D15）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
 <tr><td>提案定稿、试点场景最终确认（试点二二选一）</td><td>定稿提案 + 试点立项单</td><td>BU 负责人</td></tr>
@@ -457,39 +501,39 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>工具白名单确认（现有已批工具盘点）</td><td>白名单 1 页</td><td>试点协调人（小宋）</td></tr>
 <tr><td>知识库与提示词库最小集上线</td><td>提示词 3 条 + 知识库三类目录</td><td>试点域 + 小宋</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">阶段二：试点跑通（D16–D45）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
 <tr><td>试点一（周/月报自动生成）四件套建成</td><td>跑通 ≥3 次真实任务、下游接受 ≥1 次、改前/改后实测</td><td>数据域</td></tr>
 <tr><td>试点二（合规预检 或 通话摘要）四件套建成</td><td>同上</td><td>自媒体域 / 客服域</td></tr>
 <tr><td>双周数据通报</td><td>实测数简报 ×2 期</td><td>小宋</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">阶段三：横向扩展（D46–D75）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
 <tr><td>试点模板复制到 2–3 个域（每域 1 条工作流）</td><td>每域 1 条按四件套建成</td><td>各域负责人</td></tr>
 <tr><td>试点域指标持续周更</td><td>周数据 ×4 期</td><td>试点域</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">阶段四：复盘定版（D76–D90）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
 <tr><td>试点数据汇总报告</td><td>试点一/二的改前/改后完整对比</td><td>小宋 + 试点域</td></tr>
 <tr><td>组织形态建议报告</td><td>基于试点数据，提交"是否扩大、是否引入小队制与考核调整（届时会同 HRBP 评估）"的建议</td><td>BU 负责人</td></tr>
 <tr><td>资产盘点</td><td>提示词库、知识库、试点模板、基线测量方法四项可交付</td><td>小宋</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3 class="section-subtitle">90 天验收标准（全部可判定，不依赖分期商城）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>#</th><th>标准</th><th>判定方式</th></tr></thead>
 <tbody>
 <tr><td>A1</td><td>试点一端到端跑通，有改前/改后实测数据</td><td>数据对比表</td></tr>
@@ -498,14 +542,14 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>A4</td><td>四项资产可交付（提示词库、知识库、试点模板、基线方法），下一域可直接复用</td><td>资产清单</td></tr>
 <tr><td>A5</td><td>全程零红线事件</td><td>治理台账</td></tr>
 </tbody>
-</table>
+</table></div>
 <p class="note">分期商城的里程碑（意图书、上架等）<strong>不在本验收表内</strong>，由业务线单独考核。</p>
 </section>
 
 <!-- 十、指标体系 -->
 <section class="section" id="s10">
 <h2 class="section-title">十、指标体系</h2>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>层</th><th>指标</th><th>用途</th></tr></thead>
 <tbody>
 <tr><td>流程层（新引入）</td><td>周期时间 / 返工率 / 协同往返次数 / 异常恢复时长</td><td>证明"工作方式真的变了"</td></tr>
@@ -514,7 +558,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>经营层</td><td>存量理财：续投率、转化漏斗；分期商城（上线后）：复购率、授信通过率；投放启动后：CAC</td><td>长期观察，90 天内以基线记录为主，不做归因承诺</td></tr>
 <tr><td>治理层</td><td>红线事件数、Shadow AI 检查</td><td>守底线</td></tr>
 </tbody>
-</table>
+</table></div>
 <p>流程层属"早期指标"，盯进展不赌终局。</p>
 </section>
 
@@ -522,7 +566,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <section class="section" id="s11">
 <h2 class="section-title">十一、实施成本与收益（试点期）</h2>
 <h3 class="section-subtitle">11.1 成本（试点期，极小）</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>成本项</th><th>说明</th></tr></thead>
 <tbody>
 <tr><td>工具采购</td><td><strong>零新增</strong>——使用已批准的 AI 工具与现有系统</td></tr>
@@ -530,7 +574,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>人力投入</td><td>试点域每周约 0.5 天 × 2 个域 × 4–6 周；试点协调人（小宋）每周约 1 天</td></tr>
 <tr><td>制度成本</td><td><strong>零</strong>——不动考核、不动编制、不动汇报关系</td></tr>
 </tbody>
-</table>
+</table></div>
 <h3 class="section-subtitle">11.2 收益测算方式（不预设数字）</h3>
 <p>收益以<strong>改前基线 × 三档口径实测</strong>为准，90 天复盘报告给出实际值；不引用任何课程材料中的收益百分比作承诺。分期商城若立项，其投入产出在业务立项材料中单独测算。</p>
 </section>
@@ -543,21 +587,21 @@ td:first-child{font-weight:500;white-space:nowrap}
   <p style="margin-top:.5rem"><strong>数据性质</strong>：以下区间与倍数为<strong>通用经验值，非本 BU 实测</strong>；试点期以实际用量校准后替换为自身基线。</p>
 </div>
 <h3 class="section-subtitle">12.1 三个判断指标</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>指标</th><th>健康区间</th><th>异常说明什么</th></tr></thead>
 <tbody>
 <tr><td>输入 : 输出</td><td>3:1 ~ 8:1</td><td>超过 15:1，说明成本基本花在"反复喂背景"上</td></tr>
 <tr><td>单任务 token 成本</td><td>同类任务横向对比</td><td>同类任务相差 5 倍以上，说明流程不同，不能只归因于能力差异</td></tr>
 <tr><td>缓存命中率</td><td>目标 &gt;50%</td><td>偏低，说明提示词结构有问题（稳定内容没有前置）</td></tr>
 </tbody>
-</table>
+</table></div>
 <p>多数团队真正的问题，<strong>八成出在输入侧，而不在输出侧</strong>。大家都在纠结"AI 话太多"，实际开支在"你喂得太多"。</p>
 <h3 class="section-subtitle">12.2 轮数的影响远大于字数</h3>
 <p>第 n 轮的输入 ＝ 系统提示 ＋ 此前全部历史 ＋ 本轮提问——<strong>历史会被反复重发</strong>。</p>
 <div class="card highlight"><p>示意模型：设固定上下文 10 单位、每轮新增 5 单位，则 20 轮对话的累计成本是 5 轮的 <strong>10 倍</strong>；最后 5 轮（16–20 轮）单独就吃掉 <strong>40%</strong>。</p></div>
 <p>这条规律推翻了一个常见误区：大家都在教"话别说得太啰嗦"，但少说几个字省下的钱，<strong>不到"少聊几轮"的十分之一</strong>。真正的杠杆是——<strong>换任务就开新会话，不要让一个会话拖到二三十轮。</strong></p>
 <h3 class="section-subtitle">12.3 六类 token 漏失与对应改法</h3>
-<table>
+<div class="table-wrap"><table class="mid">
 <thead><tr><th>漏失类型</th><th>典型表现</th><th>具体改法</th><th>怎么验证有效</th></tr></thead>
 <tbody>
 <tr><td>轮数失控</td><td>一个会话聊到 30 轮，改动一直在原会话里继续</td><td>任务一换就开新会话；会话超过 15 轮，先让 AI 总结成 200 字交接稿再开新会话</td><td>平均单会话轮数下降</td></tr>
@@ -567,10 +611,10 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>模型错配</td><td>改错别字、格式化也调最强模型</td><td>按任务分级：检索、改写用轻量模型；架构决策与复杂推理才用强模型</td><td>高阶模型调用占比</td></tr>
 <tr><td>不复用</td><td>日报、周报、竞品分析每次从零重做</td><td>固化成模板、脚本或 Skill，一次性投入后长期使用</td><td>同类任务的边际成本</td></tr>
 </tbody>
-</table>
+</table></div>
 <div class="card highlight"><p><strong>最反直觉但收益最大的一条</strong>：重复性任务不该每次"推理"，应该变成"资产"。日报、周报、代码审查、竞品抓取这类活儿，第一次花 5000 token 摸索，第二次就该花 500 token 调用。差别不在提示词写得好不好，<strong>而在有没有把它固化成工具</strong>。</p></div>
 <h3 class="section-subtitle">12.4 每周 5 分钟自查清单</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>#</th><th>检查项</th><th>判定与动作</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>单会话是否经常超过 15 轮？</td><td>超了就是轮数漏失</td></tr>
@@ -581,9 +625,9 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>6</td><td>这个任务，上周是不是也这么问过一遍？</td><td>是的话，该固化了</td></tr>
 <tr><td>7</td><td>平台显示缓存命中率是多少？</td><td>低于 50% 要查提示词结构</td></tr>
 </tbody>
-</table>
+</table></div>
 <h3 class="section-subtitle">12.5 纳入试点期的四个动作</h3>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>#</th><th>动作</th><th>落点</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>token 用量纳入试点实测记录，与出数耗时、返工率并列作为成本侧指标</td><td>阶段二试点跑通、阶段四复盘报告</td></tr>
@@ -591,14 +635,14 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>3</td><td>重复性场景（周报、月报、竞品检索）在试点结束时必须固化为模板、脚本或 Skill，形成复用资产</td><td>验收标准 A4（资产可交付）</td></tr>
 <tr><td>4</td><td>本节经验值待试点期实测校准后，替换为 BU 自身基线</td><td>阶段四复盘定版</td></tr>
 </tbody>
-</table>
+</table></div>
 <p class="note"><strong>与"零新增采购"的关系</strong>：本节不改变试点期零采购的口径，只解决"用量不可见"的问题——<strong>成本不是省在采购上，而是省在会话结构上</strong>。</p>
 </section>
 
 <!-- 十三、风险与对策 -->
 <section class="section" id="s13">
 <h2 class="section-title">十三、风险与对策</h2>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>风险</th><th>表现</th><th>对策</th></tr></thead>
 <tbody>
 <tr><td>AI 演示化</td><td>Demo 漂亮、指标不动</td><td>只认流程层四指标 + 试点实测，不认"会用 AI"人数</td></tr>
@@ -608,13 +652,13 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>客户数据越界（试点二若选 B）</td><td>通话数据进未审批工具</td><td>8.3 前置条件：数据方案未定，场景不启动</td></tr>
 <tr><td>门禁方不配合（二期）</td><td>评审无排期</td><td>前置确认单提前谈，二期启动前完成</td></tr>
 </tbody>
-</table>
+</table></div>
 </section>
 
 <!-- 十四、待拍板事项 -->
 <section class="section" id="s14">
 <h2 class="section-title">十四、需要 BU 负责人拍板的事项</h2>
-<table>
+<div class="table-wrap"><table>
 <thead><tr><th>#</th><th>决策</th><th>状态 / 建议</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>试点一确认：周/月报自动生成（数据分析域）</td><td>建议 ✓，待你确认</td></tr>
@@ -623,7 +667,7 @@ td:first-child{font-weight:500;white-space:nowrap}
 <tr><td>4</td><td>工具白名单确认（以现有已批工具盘点为准）</td><td>D15 前完成</td></tr>
 <tr><td>5</td><td>分期商城二期试点的时间点</td><td>待业务立项节奏确定后再定，本期不做承诺</td></tr>
 </tbody>
-</table>
+</table></div>
 </section>
 
 <!-- 版本说明 -->
@@ -651,6 +695,13 @@ const obs = new IntersectionObserver((entries) => {
   });
 }, { rootMargin: '-80px 0px -70% 0px' });
 sections.forEach(s => obs.observe(s));
+
+// 移动端目录抽屉
+const toggleNav = (open) => document.body.classList.toggle('nav-open', open);
+document.getElementById('menuBtn').addEventListener('click', () =>
+  toggleNav(!document.body.classList.contains('nav-open')));
+document.getElementById('sidebarMask').addEventListener('click', () => toggleNav(false));
+links.forEach(l => l.addEventListener('click', () => toggleNav(false)));
 </script>
 </body>
 </html>
