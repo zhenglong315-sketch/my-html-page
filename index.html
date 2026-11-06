@@ -6,144 +6,255 @@
 <title>金融渠道运营部 AI 组织变革与业务流程再造提案</title>
 <style>
 :root{
-  --bg:oklch(0.97 0.004 240);--surface:oklch(1 0 0);
-  --border:oklch(0.88 0.008 240);--text:oklch(0.14 0.02 240);
-  --muted:oklch(0.50 0.015 240);--accent:oklch(0.50 0.14 198);
-  --accent-h:oklch(0.43 0.17 198);--accent-l:oklch(0.94 0.04 198);
-  --hdr:oklch(0.17 0.04 258);--hdr-txt:oklch(0.95 0.005 240);
-  --sw:264px;--hh:68px;
+  --bg:#f5f7fa;--surface:#fff;--raised:#eef1f5;--thead:#e4eaf2;--thead-line:#c3cddb;
+  --text:#111827;--text-2:#4b5565;--muted:#6b7487;
+  --line:rgba(17,24,39,.08);--line-2:rgba(17,24,39,.13);
+  --accent:oklch(0.50 0.14 198);--accent-d:oklch(0.42 0.12 198);
+  --accent-l:oklch(0.965 0.022 198);--accent-line:oklch(0.50 0.14 198/.28);
+  --warn-l:#fdf7ec;--warn-line:rgba(180,83,9,.22);
+  --danger-l:#fdf3f3;--danger-line:rgba(185,28,28,.2);
+  --ok:#16a34a;--mid:#d97706;--high:#dc2626;
+  --hdr:oklch(0.17 0.04 258);--hdr-2:oklch(0.25 0.045 258);--hdr-3:oklch(0.31 0.05 258);
+  --hdr-txt:oklch(0.95 0.005 240);--hdr-muted:oklch(0.78 0.012 240);
+  --mono:'JetBrains Mono','Cascadia Mono',Consolas,'SF Mono',monospace;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --sw:264px;--hh:64px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
-  background:var(--bg);color:var(--text);line-height:1.75;font-size:15px}
-.site-header{position:fixed;top:0;left:0;right:0;height:var(--hh);
-  background:var(--hdr);display:flex;align-items:center;padding:0 2rem;
-  box-shadow:0 2px 12px oklch(0 0 0/.3);z-index:200;gap:1rem}
-.site-header h1{color:var(--hdr-txt);font-size:1.05rem;font-weight:600;
-  letter-spacing:.02em;line-height:1.35;flex:1}
-.site-header .badge{background:oklch(0.36 0.06 258);color:oklch(0.80 0.01 240);
-  font-size:.72rem;padding:.2rem .6rem;border-radius:4px;white-space:nowrap}
+  background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 顶部标题栏 */
+.site-header{position:fixed;top:0;left:0;right:0;height:var(--hh);z-index:200;
+  display:flex;align-items:center;gap:16px;padding:0 32px;background:var(--hdr);
+  box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.site-header h1{flex:1;min-width:0;color:var(--hdr-txt);font-size:17px;font-weight:600;line-height:1.35;letter-spacing:.01em}
+.badge{background:var(--hdr-2);color:var(--hdr-muted);font-family:var(--mono);font-size:12px;line-height:16px;
+  padding:4px 8px;border-radius:4px;white-space:nowrap}
+.header-actions{display:flex;gap:8px;flex-shrink:0}
+.act-btn,.menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:32px;padding:0 12px;
+  border:1px solid rgba(255,255,255,.12);border-radius:8px;background:var(--hdr-2);color:var(--hdr-txt);
+  font:inherit;font-size:13px;line-height:1;cursor:pointer;white-space:nowrap;
+  transition:background-color .15s var(--ease),border-color .15s var(--ease),transform .15s var(--ease)}
+.act-btn:hover,.menu-btn:hover{background:var(--hdr-3);border-color:rgba(255,255,255,.2)}
+.act-btn:active,.menu-btn:active{transform:scale(.98)}
+.act-btn:disabled{opacity:.6;cursor:wait}
+.act-btn svg,.menu-btn svg{width:16px;height:16px;flex-shrink:0}
+.menu-btn{display:none;width:36px;height:36px;padding:0;flex-shrink:0}
+
+/* 左侧目录 */
 .layout{display:flex;margin-top:var(--hh);min-height:calc(100vh - var(--hh))}
-.sidebar{width:var(--sw);flex-shrink:0;position:sticky;top:var(--hh);
-  height:calc(100vh - var(--hh));overflow-y:auto;background:var(--surface);
-  border-right:1px solid var(--border);padding:1.25rem 0}
-.sidebar-lbl{padding:.2rem 1.2rem .6rem;font-size:.68rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
-.sidebar a{display:block;padding:.38rem 1.2rem .38rem 1.4rem;font-size:.82rem;
-  color:var(--muted);text-decoration:none;border-left:2px solid transparent;
-  transition:color .12s,border-color .12s,background .12s;line-height:1.4}
-.sidebar a:hover,.sidebar a.active{color:var(--accent);
-  border-left-color:var(--accent);background:var(--accent-l)}
-.main{flex:1;padding:2.5rem 3rem;max-width:920px;min-width:0}
-.section{margin-bottom:3rem;scroll-margin-top:calc(var(--hh) + 1.5rem)}
-.section-title{font-size:1.18rem;font-weight:700;color:var(--hdr);
-  padding-bottom:.55rem;border-bottom:2px solid var(--accent);margin-bottom:1.4rem;
-  letter-spacing:.01em}
-.section-subtitle{font-size:1rem;font-weight:600;color:var(--text);
-  margin:1.5rem 0 .7rem;padding-left:.6rem;border-left:3px solid var(--accent)}
-p{margin:.6rem 0;color:var(--text)}
-strong{font-weight:600}
-.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin:1rem 0;
-  padding:.8rem 1rem;background:var(--accent-l);border-radius:8px;border:1px solid var(--border)}
-.meta-row span{font-size:.82rem;color:var(--muted)}
-.meta-row span b{color:var(--text);font-weight:600}
-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.84rem;
-  background:var(--surface);border-radius:8px;overflow:hidden;
-  box-shadow:0 1px 4px oklch(0 0 0/.06)}
-thead tr{background:oklch(0.22 0.04 258);color:oklch(0.92 0.005 240)}
-thead th{padding:.6rem .9rem;text-align:left;font-weight:600;font-size:.78rem;
-  letter-spacing:.04em;text-transform:uppercase}
-tbody tr:nth-child(even){background:oklch(0.975 0.004 240)}
-tbody tr:hover{background:var(--accent-l)}
-td{padding:.55rem .9rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55}
-td:first-child{font-weight:500;white-space:nowrap}
-.tag{display:inline-block;padding:.18rem .55rem;border-radius:4px;font-size:.72rem;font-weight:600}
-.tag-green{background:oklch(0.92 0.08 148);color:oklch(0.28 0.09 148)}
-.tag-red{background:oklch(0.94 0.06 20);color:oklch(0.32 0.12 20)}
-.tag-yellow{background:oklch(0.95 0.07 85);color:oklch(0.38 0.10 85)}
-.tag-blue{background:oklch(0.92 0.06 220);color:oklch(0.28 0.10 220)}
-.tag-star{background:oklch(0.90 0.10 60);color:oklch(0.30 0.12 55)}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:1.2rem 1.4rem;margin:1rem 0;box-shadow:0 1px 4px oklch(0 0 0/.05)}
-.card.highlight{border-left:4px solid var(--accent);background:var(--accent-l)}
-.card.warn{border-left:4px solid oklch(0.70 0.14 60);background:oklch(0.97 0.04 70)}
-.card.danger{border-left:4px solid oklch(0.58 0.16 20);background:oklch(0.97 0.03 20)}
-.law-list{list-style:none;padding:0;margin:.8rem 0}
-.law-list li{display:flex;gap:.75rem;padding:.45rem 0;border-bottom:1px solid var(--border)}
-.law-list li:last-child{border-bottom:none}
-.law-num{flex-shrink:0;width:1.8rem;height:1.8rem;border-radius:50%;
-  background:var(--accent);color:#fff;display:flex;align-items:center;
-  justify-content:center;font-size:.75rem;font-weight:700;margin-top:.1rem}
-.phase{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0}
-.phase-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  padding:1rem;position:relative;overflow:hidden}
-.phase-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
-.phase-card h4{font-size:.83rem;font-weight:700;color:var(--accent);margin-bottom:.5rem}
-.phase-card p{font-size:.8rem;color:var(--muted);margin:.25rem 0}
-.arch-box{background:oklch(0.12 0.04 258);color:oklch(0.90 0.01 240);
-  border-radius:8px;padding:1.2rem 1.6rem;font-family:'Cascadia Code','Fira Code','Consolas',monospace;
-  font-size:.83rem;line-height:1.9;margin:1rem 0}
-.arch-box .l3{color:oklch(0.75 0.12 198)}
-.arch-box .l2{color:oklch(0.78 0.12 148)}
-.arch-box .l1{color:oklch(0.80 0.10 60)}
-.note{font-size:.8rem;color:var(--muted);margin:.5rem 0;padding:.6rem .9rem;
-  background:oklch(0.97 0.006 240);border-radius:6px;border:1px solid var(--border);
-  font-style:italic}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-.table-wrap{margin:1rem 0;overflow-x:auto;-webkit-overflow-scrolling:touch;
-  border-radius:8px;box-shadow:0 1px 4px oklch(0 0 0/.06)}
-.table-wrap table{margin:0;box-shadow:none}
-.menu-btn{display:none;flex-shrink:0;width:38px;height:38px;border:none;border-radius:6px;
-  background:oklch(0.28 0.05 258);color:var(--hdr-txt);font-size:1.15rem;cursor:pointer;
-  align-items:center;justify-content:center}
+.sidebar{width:var(--sw);flex-shrink:0;position:sticky;top:var(--hh);height:calc(100vh - var(--hh));
+  overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:24px 12px}
+.sidebar-lbl{padding:0 12px 8px;font-size:12px;line-height:16px;font-weight:500;color:var(--muted)}
+.sidebar a{display:block;padding:7px 12px;margin-bottom:2px;border-radius:6px;border:1px solid transparent;
+  font-size:14px;line-height:20px;color:var(--text-2);text-decoration:none;
+  transition:background-color .15s var(--ease),color .15s var(--ease),border-color .15s var(--ease)}
+.sidebar a:hover{background:var(--raised);color:var(--text)}
+.sidebar a.active{background:var(--accent-l);border-color:var(--accent-line);color:var(--accent-d)}
 .sidebar-mask{display:none}
-@media(max-width:800px){
-  :root{--hh:60px}
+
+/* 正文 */
+.main{flex:1;min-width:0;max-width:920px;padding:40px 48px 64px}
+.section{margin-bottom:56px;scroll-margin-top:calc(var(--hh) + 24px)}
+.section-title{font-size:20px;line-height:28px;font-weight:600;color:var(--text);
+  padding-bottom:12px;border-bottom:1px solid var(--line-2);margin-bottom:24px}
+.section-subtitle{font-size:16px;line-height:24px;font-weight:600;color:var(--text);margin:32px 0 12px}
+p{margin:8px 0}
+strong{font-weight:600}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px 24px;margin:16px 0;padding:12px 16px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.meta-row span{font-size:13px;line-height:20px;color:var(--text)}
+.meta-row span b{font-weight:500;color:var(--muted);margin-right:4px}
+
+/* 表格 */
+.table-wrap{margin:16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--surface);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+table{width:100%;border-collapse:collapse;font-size:14px;line-height:22px}
+thead th{padding:8px 12px;text-align:left;font-size:13px;line-height:20px;font-weight:600;color:var(--text);
+  background:var(--thead);border-bottom:2px solid var(--thead-line)}
+td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:first-child td{border-top:none}
+tbody tr{transition:background-color .15s var(--ease)}
+tbody tr:hover{background:#f8fafc}
+td:first-child{font-weight:500}
+th{white-space:nowrap}
+td{text-wrap:pretty}
+.nw{white-space:nowrap}
+
+/* 标签、状态圆点、勾叉图标 */
+.tag{display:inline-block;white-space:nowrap;padding:1px 7px;border:1px solid transparent;border-radius:4px;
+  font-size:12px;line-height:18px;font-weight:500;background:var(--raised);color:var(--text-2)}
+.tag-pilot{background:var(--accent-l);border-color:var(--accent-line);color:var(--accent-d)}
+.tag-cand{background:var(--surface);border-color:var(--line-2);color:var(--text-2)}
+.risk{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:13px;line-height:20px;
+  font-weight:400;color:var(--text-2);vertical-align:top}
+.risk::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--muted)}
+.risk-h::before{background:var(--high)}
+.risk-m::before{background:var(--mid)}
+.risk-l::before{background:var(--ok)}
+td:first-child .risk{font-size:inherit;line-height:inherit;font-weight:500;color:var(--text)}
+.ic{width:16px;height:16px;vertical-align:-3px;flex-shrink:0;margin-right:2px}
+
+/* 卡片 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin:16px 0;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card.highlight{background:var(--accent-l);border-color:var(--accent-line);box-shadow:none}
+.card.warn{background:var(--warn-l);border-color:var(--warn-line);box-shadow:none}
+.card.danger{background:var(--danger-l);border-color:var(--danger-line);box-shadow:none}
+.card>p:first-child{margin-top:0}
+.card>p:last-child{margin-bottom:0}
+.law-list{list-style:none;margin:12px 0 0}
+.law-list li{display:flex;gap:12px;padding:12px 0 0;margin-top:12px;border-top:1px solid var(--accent-line)}
+.law-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:500;margin-top:2px}
+.note{font-size:13px;line-height:22px;color:var(--text-2);margin:12px 0;padding:8px 12px;
+  border:1px solid var(--line);border-radius:8px}
+.note strong{color:var(--text)}
+.doc-link{color:var(--accent-d);text-decoration:underline;text-decoration-color:var(--accent-line);text-underline-offset:3px;transition:text-decoration-color .15s var(--ease)}
+.doc-link:hover{text-decoration-color:currentColor}
+
+/* 4.1 选取标准清单 */
+.criteria{list-style:none;margin:16px 0;padding:4px 20px;background:var(--surface);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.criteria li{display:grid;grid-template-columns:32px 128px 1fr;gap:12px;align-items:baseline;
+  padding:12px 0;border-top:1px solid var(--line)}
+.criteria li:first-child{border-top:none}
+.criteria .num{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.criteria .desc{color:var(--text-2)}
+
+/* 第五章 三层架构：实线已在试点期建设，虚线为二期 */
+.arch{display:flex;flex-direction:column;align-items:center;gap:8px;margin:16px 0 8px}
+.arch-layer{display:flex;align-items:center;gap:16px;width:100%;padding:12px 20px;border-radius:12px;
+  border:1px solid var(--line-2);background:var(--surface)}
+.arch-layer.l3{width:78%;border-style:dashed;background:transparent}
+.arch-layer.l2{width:89%;background:var(--accent-l);border-color:var(--accent-line)}
+.arch-layer.l1{background:var(--hdr);border-color:var(--hdr);color:var(--hdr-txt)}
+.arch-tag{width:28px;flex-shrink:0;font-family:var(--mono);font-size:13px;font-weight:500;color:var(--muted)}
+.l2 .arch-tag{color:var(--accent-d)}
+.l1 .arch-tag{color:var(--hdr-muted)}
+.arch-name{font-size:15px;line-height:22px;font-weight:600}
+.arch-meta{font-size:13px;font-weight:400;color:var(--text-2)}
+.arch-keys{font-size:13px;line-height:20px;color:var(--text-2)}
+.l1 .arch-meta,.l1 .arch-keys{color:var(--hdr-muted)}
+
+/* 第九章 90 天时间轴：宽度按天数比例 15 / 30 / 30 / 15 */
+.timeline{display:grid;grid-template-columns:minmax(10.5em,15fr) 30fr 30fr minmax(6em,15fr);gap:4px;margin:16px 0;padding:16px 20px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.tl-head{display:flex;flex-direction:column}
+.tl-name{font-size:13px;line-height:20px;font-weight:500;color:var(--text-2)}
+.tl-range{font-family:var(--mono);font-size:12px;line-height:16px;color:var(--muted)}
+.tl-bar{height:8px;border-radius:4px;background:#dce2ea;margin:8px 0}
+.tl-phase.key .tl-bar{background:var(--accent)}
+.tl-phase.key .tl-name{color:var(--accent-d)}
+.tl-title{font-size:14px;line-height:20px;font-weight:500;color:var(--text);padding-right:8px}
+
+/* PDF 导出时的独立版式（只在生成的 PDF 中使用） */
+.pdf-header{background:var(--hdr);color:var(--hdr-txt);padding:16px 24px;border-radius:12px;
+  margin-bottom:24px;display:flex;align-items:center;gap:16px}
+.pdf-header h1{font-size:18px;font-weight:600;letter-spacing:.01em;line-height:1.35;flex:1}
+.pdf-part{padding:4px 2px}
+.pdf-part .section{margin-bottom:0}
+.pdf-part .table-wrap{overflow:visible;box-shadow:none}
+.pdf-part tbody tr:hover{background:inherit}
+/* 固定为电脑版式，避免在手机上导出时套用移动端样式 */
+.pdf-part{font-size:15px;line-height:1.75}
+.pdf-part .section-title{font-size:20px;line-height:28px;margin-bottom:24px}
+.pdf-part .section-subtitle{font-size:16px;margin:32px 0 12px}
+.pdf-part .meta-row{flex-direction:row;gap:8px 24px;padding:12px 16px}
+.pdf-part .card{padding:20px 24px}
+.pdf-part table{font-size:14px;line-height:22px;min-width:0}
+.pdf-part thead th{padding:8px 12px;font-size:13px}
+.pdf-part td{padding:8px 12px}
+.pdf-part table.wide th:last-child{width:4.6em}
+.pdf-part .criteria{padding:4px 20px}
+.pdf-part .criteria li{grid-template-columns:32px 128px 1fr;gap:12px}
+.pdf-part .criteria .desc{grid-column:auto}
+.pdf-part .arch-layer{padding:12px 20px}
+.pdf-part .arch-layer.l3{width:78%}
+.pdf-part .arch-layer.l2{width:89%}
+.pdf-part .timeline{grid-template-columns:minmax(10.5em,15fr) 30fr 30fr minmax(6em,15fr);gap:4px;padding:16px 20px}
+.pdf-part .law-list li{gap:12px}
+
+@media print{
+  @page{size:A4;margin:12mm 10mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:13px}
+  .site-header{position:static;height:auto;padding:16px 24px;box-shadow:none;border-radius:12px}
+  .menu-btn,.header-actions,.sidebar,.sidebar-mask{display:none!important}
+  .layout{display:block;margin-top:0;min-height:0}
+  .main{max-width:none;padding:20px 0 0}
+  .section{margin-bottom:32px}
+  .table-wrap,.criteria,.timeline,.card{box-shadow:none}
+  .table-wrap{overflow:visible}
+  table.mid,table.wide{min-width:0}
+  table.wide th:last-child{width:4.6em}
+  tr,.card,.criteria li,.arch,.timeline,.meta-row,.note,.law-list li{break-inside:avoid}
+  .section-title,.section-subtitle{break-after:avoid}
+  thead{display:table-header-group}
+}
+
+@media screen and (max-width:800px){
+  :root{--hh:56px}
   body{font-size:14px;line-height:1.7}
-  .site-header{padding:0 .9rem;gap:.6rem}
-  .site-header h1{font-size:.88rem;line-height:1.3;display:-webkit-box;
+  .site-header{padding:0 12px;gap:8px}
+  .site-header h1{font-size:14px;line-height:20px;display:-webkit-box;
     -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .site-header .badge{font-size:.62rem;padding:.15rem .4rem}
-  .menu-btn{display:flex}
-  .sidebar{position:fixed;top:var(--hh);left:0;bottom:0;height:auto;width:260px;max-width:80vw;
-    z-index:190;transform:translateX(-100%);transition:transform .22s ease;
-    box-shadow:4px 0 16px oklch(0 0 0/.15)}
+  .site-header .badge{font-size:11px;padding:2px 6px}
+  .menu-btn{display:inline-flex}
+  .sidebar{position:fixed;top:var(--hh);left:0;bottom:0;height:auto;width:264px;max-width:80vw;z-index:190;
+    transform:translateX(-100%);transition:transform .3s var(--ease);box-shadow:0 8px 24px rgba(0,0,0,.12)}
   body.nav-open .sidebar{transform:none}
-  .sidebar-mask{position:fixed;inset:var(--hh) 0 0 0;background:oklch(0 0 0/.35);z-index:180}
+  .sidebar-mask{position:fixed;inset:var(--hh) 0 0 0;background:rgba(17,24,39,.36);z-index:180}
   body.nav-open .sidebar-mask{display:block}
   body.nav-open{overflow:hidden}
-  .main{padding:1.25rem 1rem 2rem;max-width:100%}
-  .section{margin-bottom:2.25rem}
-  .section-title{font-size:1.05rem;margin-bottom:1.1rem}
-  .section-subtitle{font-size:.95rem;margin:1.25rem 0 .6rem}
-  .meta-row{flex-direction:column;gap:.3rem;padding:.7rem .9rem}
-  .card{padding:1rem 1rem}
-  table{font-size:.8rem}
-  thead th{padding:.5rem .65rem;font-size:.72rem;white-space:nowrap}
-  td{padding:.5rem .65rem}
-  td:first-child{white-space:normal;min-width:4.5em}
+  .main{padding:20px 16px 40px;max-width:100%}
+  .section{margin-bottom:40px}
+  .section-title{font-size:18px;line-height:26px;margin-bottom:20px}
+  .section-subtitle{font-size:15px;line-height:22px;margin:24px 0 8px}
+  .meta-row{flex-direction:column;gap:4px;padding:12px}
+  .card{padding:16px}
+  table{font-size:13px;line-height:20px}
+  thead th{padding:8px 10px;font-size:12px;white-space:nowrap}
+  td{padding:8px 10px}
   table.mid{min-width:560px}
   table.wide{min-width:720px}
-  .phase{grid-template-columns:repeat(2,1fr);gap:.7rem}
-  .phase-card{padding:.8rem}
-  .arch-box{padding:1rem;font-size:.76rem;line-height:1.75}
-  .arch-box div{padding:.25rem 0}
-  .law-list li{gap:.6rem}
+  .criteria{padding:4px 16px}
+  .criteria li{grid-template-columns:24px 1fr;gap:2px 8px}
+  .criteria .desc{grid-column:2}
+  .arch-layer,.arch-layer.l3,.arch-layer.l2{width:100%;padding:12px 16px;gap:12px}
+  .timeline{grid-template-columns:1fr 1fr;gap:16px 12px;padding:16px}
+  .law-list li{gap:8px}
 }
-@media(max-width:420px){
+@media screen and (max-width:640px){
+  .act-btn{width:36px;height:36px;padding:0}
+  .act-btn span{display:none}
+}
+@media screen and (max-width:420px){
   .site-header .badge{display:none}
 }
-@media(max-width:340px){
-  .phase{grid-template-columns:1fr}
+@media screen and (max-width:340px){
+  .timeline{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <header class="site-header">
-  <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+  <button class="menu-btn" id="menuBtn" aria-label="目录"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
   <h1>金融渠道运营部 AI 组织变革与业务流程再造提案</h1>
   <span class="badge">V2.0 · 2026-10-28</span>
+  <div class="header-actions">
+    <button class="act-btn" id="pdfBtn" title="导出 PDF" aria-label="导出 PDF">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      <span>导出 PDF</span>
+    </button>
+    <button class="act-btn" id="printBtn" title="打印" aria-label="打印">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>
+      <span>打印</span>
+    </button>
+  </div>
 </header>
 <div class="layout">
 <div class="sidebar-mask" id="sidebarMask"></div>
@@ -163,6 +274,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <a href="#s12">十二、Token 治理</a>
   <a href="#s13">十三、风险与对策</a>
   <a href="#s14">十四、待拍板事项</a>
+  <a href="#s15">十五、案例：AI 短剧工作流</a>
 </nav>
 <main class="main">
 
@@ -183,10 +295,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <tbody>
 <tr><td><strong>主项目</strong>：BU AI 组织变革</td><td>制度与协作形态的演进，以试点产出为依据，不预设结论</td><td>90 天试点数据 + 组织形态建议报告</td></tr>
 <tr><td><strong>试点项目</strong>：1–2 个场景先跑通</td><td>本提案 90 天的核心交付</td><td>试点场景端到端跑通，有改前/改后实测</td></tr>
-<tr><td><strong>重点业务</strong>：新分期商城独立 APP</td><td>BU 确定的重点业务，独立立项、独立节奏，可复用试点产出；列为二期试点候选，不与本变革的验收绑定</td><td>按业务自身里程碑</td></tr>
+<tr><td><strong>重点业务</strong>：新分期商城独立 APP</td><td>BU 确定的重点业务，独立立项、独立节奏，可复用试点产出；列为二期试点候选，不与本变革的验收绑定</td><td class="nw">按业务自身里程碑</td></tr>
 </tbody>
 </table></div>
-<div class="card warn">
+<div class="card">
   <p><strong>解耦条款</strong>：分期商城若延期或调整，不影响变革试点验收；变革试点不占用新业务开发人力；两者共用一套工作流方法（四件套）与资产库（提示词库、知识库），但任务、节奏、验收完全分开。</p>
 </div>
 <h3 class="section-subtitle">不做什么</h3>
@@ -213,9 +325,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>#</th><th>低效来源（待验证）</th><th>典型表现（待验证）</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>人工转述与重复产出</td><td>客户诉求在客服→会员→产品/渠道间人工转述〔待核实〕；合规标准多处分别送审〔待核实〕</td></tr>
-<tr><td>2</td><td>跨单元排期等待</td><td>设计→前端→后端接力等待〔工时数据待测〕</td></tr>
-<tr><td>3</td><td>外部放行等待</td><td>合规/风控/资产方介入时点〔待核实〕</td></tr>
+<tr><td class="nw">1</td><td>人工转述与重复产出</td><td>客户诉求在客服→会员→产品/渠道间人工转述〔待核实〕；合规标准多处分别送审〔待核实〕</td></tr>
+<tr><td class="nw">2</td><td class="nw">跨单元排期等待</td><td>设计→前端→后端接力等待〔工时数据待测〕</td></tr>
+<tr><td class="nw">3</td><td class="nw">外部放行等待</td><td>合规/风控/资产方介入时点〔待核实〕</td></tr>
 </tbody>
 </table></div>
 <p><strong>对应结论</strong>：试点期不预设"哪里低效"，只要求<strong>基线数据说话</strong>——试点场景的改前/改后实测，就是低效是否存在的直接证据。</p>
@@ -237,10 +349,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th></th><th>试点期（90 天内）</th><th>目标形态（试点验证后评估）</th></tr></thead>
 <tbody>
-<tr><td>组队方式</td><td><strong>域负责人制</strong>：试点场景由所在域负责，配一名试点协调人（<strong>小宋</strong>）跨域拉通</td><td>能力池 + 业务小队（新业务立项时按需组建）</td></tr>
-<tr><td>考核制度</td><td><strong>完全不动</strong>，沿用现行考核，试点产出作为专项工作汇报</td><td><strong>暂缓</strong>：是否引入小队考核权重调整（原 70/30 设想），待试点数据出来后由 BU 负责人会同 HRBP 评估，本提案不做预设</td></tr>
-<tr><td>组织架构</td><td>现有 6 部门，不动</td><td>同左</td></tr>
-<tr><td>制度依赖</td><td><strong>零</strong>——不需要任何审批即可启动</td><td>视试点结论另行提案</td></tr>
+<tr><td class="nw">组队方式</td><td><strong>域负责人制</strong>：试点场景由所在域负责，配一名试点协调人（<strong>小宋</strong>）跨域拉通</td><td>能力池 + 业务小队（新业务立项时按需组建）</td></tr>
+<tr><td class="nw">考核制度</td><td><strong>完全不动</strong>，沿用现行考核，试点产出作为专项工作汇报</td><td><strong>暂缓</strong>：是否引入小队考核权重调整（原 70/30 设想），待试点数据出来后由 BU 负责人会同 HRBP 评估，本提案不做预设</td></tr>
+<tr><td class="nw">组织架构</td><td>现有 6 部门，不动</td><td class="nw">同左</td></tr>
+<tr><td class="nw">制度依赖</td><td><strong>零</strong>——不需要任何审批即可启动</td><td>视试点结论另行提案</td></tr>
 </tbody>
 </table></div>
 <div class="card highlight">
@@ -254,9 +366,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>口径</th><th>定义</th><th>测量方式</th></tr></thead>
 <tbody>
-<tr><td>周期缩短</td><td>触发到交付的时间</td><td>同一流程改前/改后实测</td></tr>
-<tr><td>返工减少</td><td>一次通过率</td><td>统计期内返工率</td></tr>
-<tr><td>产能提升</td><td>同等人力单位产出</td><td>产出量对比</td></tr>
+<tr><td class="nw">周期缩短</td><td class="nw">触发到交付的时间</td><td>同一流程改前/改后实测</td></tr>
+<tr><td class="nw">返工减少</td><td class="nw">一次通过率</td><td class="nw">统计期内返工率</td></tr>
+<tr><td class="nw">产能提升</td><td class="nw">同等人力单位产出</td><td class="nw">产出量对比</td></tr>
 </tbody>
 </table></div>
 <p>不接受无基线、无测量方式的"效率明显提升"类表述。<strong>所有目标值在基线回收后设定，本提案不预设具体数字。</strong></p>
@@ -266,31 +378,31 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <section class="section" id="s4">
 <h2 class="section-title">四、试点选取：一到两个场景，标准先行</h2>
 <h3 class="section-subtitle">4.1 选取标准（五条，全部满足才入选）</h3>
-<div class="phase">
-<div class="phase-card"><h4>1. 可逆</h4><p>错了能回退，不产生不可逆后果</p></div>
-<div class="phase-card"><h4>2. 指标现成</h4><p>有明确改前基线可测，四周内能拿到改后对比</p></div>
-<div class="phase-card"><h4>3. 单域可闭环</h4><p>一个域内就能跑通，不依赖跨部门先改造</p></div>
-<div class="phase-card"><h4>4. 不依赖外部门禁</h4><p>不需要合规/风控/资金方先行放行</p></div>
-<div class="phase-card"><h4>5. 不依赖新系统</h4><p>用现有系统与已批 AI 工具即可运行</p></div>
-</div>
+<ol class="criteria">
+<li><span class="num">01</span><strong>可逆</strong><span class="desc">错了能回退，不产生不可逆后果</span></li>
+<li><span class="num">02</span><strong>指标现成</strong><span class="desc">有明确改前基线可测，四周内能拿到改后对比</span></li>
+<li><span class="num">03</span><strong>单域可闭环</strong><span class="desc">一个域内就能跑通，不依赖跨部门先改造</span></li>
+<li><span class="num">04</span><strong>不依赖外部门禁</strong><span class="desc">不需要合规/风控/资金方先行放行</span></li>
+<li><span class="num">05</span><strong>不依赖新系统</strong><span class="desc">用现有系统与已批 AI 工具即可运行</span></li>
+</ol>
 <h3 class="section-subtitle">4.2 候选场景对比</h3>
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>候选场景</th><th>所在域</th><th>可逆</th><th>指标</th><th>单域闭环</th><th>依赖</th><th>评估</th></tr></thead>
 <tbody>
-<tr><td><strong>A 周/月报自动生成</strong></td><td>数据分析</td><td><span class="tag tag-green">✅</span></td><td>✅ 出数耗时，现成</td><td><span class="tag tag-green">✅</span></td><td>无</td><td><span class="tag tag-star">★ 试点一</span> 最安全、指标现成、四周内可见数</td></tr>
-<tr><td><strong>B 通话摘要与工单草稿</strong></td><td>电销客服</td><td><span class="tag tag-green">✅</span></td><td>✅ 单通处理时长</td><td><span class="tag tag-green">✅</span></td><td>⚠️ 涉客户通话数据，工具形态与脱敏方案须先定</td><td><span class="tag tag-blue">试点二候选</span> 下游收益明确（工单自动创建）</td></tr>
-<tr><td><strong>C 合规预检（红线词库）</strong></td><td>自媒体</td><td><span class="tag tag-green">✅</span></td><td>✅ 送审返工率</td><td><span class="tag tag-green">✅</span></td><td>需历史退回原因作种子词库；终审仍在人</td><td><span class="tag tag-blue">试点二候选</span> 直接减少跨域往返</td></tr>
-<tr><td>D 客户诉求闭环</td><td>客服+会员</td><td><span class="tag tag-green">✅</span></td><td>✅ 闭环率</td><td><span class="tag tag-red">❌ 跨两域</span></td><td>需工单路由规则先定</td><td>二期（横向扩展阶段）</td></tr>
-<tr><td>E 分期商城交付线</td><td>全 BU</td><td><span class="tag tag-red">❌ 部分</span></td><td>✅</td><td><span class="tag tag-red">❌</span></td><td>依赖门禁前置 + 供应商后台（新系统）</td><td><span class="tag tag-blue">二期试点候选</span>（详见 4.4）</td></tr>
-<tr><td>F 分层与名单自动更新</td><td>会员运营</td><td><span class="tag tag-green">✅</span></td><td>✅</td><td><span class="tag tag-green">✅</span></td><td>分层规则变更须人审（见 6.3）</td><td>二期</td></tr>
+<tr><td><strong>A 周/月报自动生成</strong></td><td class="nw">数据分析</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg>出数耗时，现成</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td class="nw">无</td><td><span class="tag tag-pilot">试点一</span> 最安全、指标现成、四周内可见数</td></tr>
+<tr><td><strong>B 通话摘要与工单草稿</strong></td><td class="nw">电销客服</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg>单通处理时长</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="注意"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>涉客户通话数据，工具形态与脱敏方案须先定</td><td><span class="tag tag-cand">试点二候选</span> 下游收益明确（工单自动创建）</td></tr>
+<tr><td><strong>C 合规预检（红线词库）</strong></td><td class="nw">自媒体</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg>送审返工率</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td>需历史退回原因作种子词库；终审仍在人</td><td><span class="tag tag-cand">试点二候选</span> 直接减少跨域往返</td></tr>
+<tr><td class="nw">D 客户诉求闭环</td><td class="nw">客服+会员</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg>闭环率</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="否"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>跨两域</td><td>需工单路由规则先定</td><td>二期（横向扩展阶段）</td></tr>
+<tr><td>E 分期商城交付线</td><td class="nw">全 BU</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="否"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>部分</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="否"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></td><td>依赖门禁前置 + 供应商后台（新系统）</td><td><span class="tag tag-cand">二期试点候选</span>（详见 4.4）</td></tr>
+<tr><td>F 分层与名单自动更新</td><td class="nw">会员运营</td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td><svg class="ic" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="是"><path d="M20 6 9 17l-5-5"/></svg></td><td>分层规则变更须人审（见 6.3）</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 <h3 class="section-subtitle">4.3 推荐组合（待 BU 负责人定）</h3>
 <div class="table-wrap"><table class="mid">
 <thead><tr><th>试点</th><th>推荐</th><th>理由</th><th>备选</th></tr></thead>
 <tbody>
-<tr><td>试点一</td><td><strong>A 周/月报自动生成</strong>（数据分析域）</td><td>五条标准全满足；出数耗时当天可测基线；产出（报表）全 BU 的人都能看见，宣传价值最大</td><td>—</td></tr>
-<tr><td>试点二</td><td><strong>C 合规预检</strong> 或 <strong>B 通话摘要</strong>（二选一）</td><td>C 的下游收益最直观（送审返工减少）；B 的数据合规问题若两周内定不了工具形态，则选 C</td><td>均不满足则试点二顺延，只跑试点一</td></tr>
+<tr><td class="nw">试点一</td><td><strong>A 周/月报自动生成</strong>（数据分析域）</td><td>五条标准全满足；出数耗时当天可测基线；产出（报表）全 BU 的人都能看见，宣传价值最大</td><td class="nw">—</td></tr>
+<tr><td class="nw">试点二</td><td><strong>C 合规预检</strong> 或 <strong>B 通话摘要</strong>（二选一）</td><td>C 的下游收益最直观（送审返工减少）；B 的数据合规问题若两周内定不了工具形态，则选 C</td><td>均不满足则试点二顺延，只跑试点一</td></tr>
 </tbody>
 </table></div>
 <h3 class="section-subtitle">4.4 分期商城作为二期试点候选</h3>
@@ -307,19 +419,19 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <!-- 五、AI 工作流总体架构 -->
 <section class="section" id="s5">
 <h2 class="section-title">五、AI 工作流总体架构：三层</h2>
-<div class="arch-box">
-<div class="l3">L3 跨部门流程再造（3 条，二期）—— 交接减少 · 事件驱动 · 门禁前置</div>
-<div class="l2">L2 部门场景工作流（9 域场景库，试点期先跑 1–2 条）—— 各域自己可运营、可验收</div>
-<div class="l1">L1 BU 共用底座（1 套，试点期最小集）—— 提示词库 · 知识库</div>
+<div class="arch">
+<div class="arch-layer l3"><span class="arch-tag">L3</span><div><div class="arch-name">跨部门流程再造<span class="arch-meta">（3 条，二期）</span></div><div class="arch-keys">交接减少 · 事件驱动 · 门禁前置</div></div></div>
+<div class="arch-layer l2"><span class="arch-tag">L2</span><div><div class="arch-name">部门场景工作流<span class="arch-meta">（9 域场景库，试点期先跑 1–2 条）</span></div><div class="arch-keys">各域自己可运营、可验收</div></div></div>
+<div class="arch-layer l1"><span class="arch-tag">L1</span><div><div class="arch-name">BU 共用底座<span class="arch-meta">（1 套，试点期最小集）</span></div><div class="arch-keys">提示词库 · 知识库</div></div></div>
 </div>
 <h3 class="section-subtitle">L1 共用底座（九域共用，防止各域重复采购与重复建设）</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>底座组件</th><th>试点期（最小集）</th><th>建设责任</th></tr></thead>
 <tbody>
-<tr><td>专家级提示词库</td><td>试点场景所需提示词（试点一约 3 条起步）</td><td>试点所在域出场景，BU 统一维护</td></tr>
-<tr><td>部门级知识库</td><td>产品口径、合规红线、试点 SOP 三类先行入库</td><td>各域出内容，统一入口</td></tr>
-<tr><td>高频智能体</td><td>试点场景所需 1–2 个（先以"人工触发 + 已批工具"方式运行，不建平台）</td><td>BU 统一定义</td></tr>
-<tr><td>信息雷达</td><td>二期再建</td><td>—</td></tr>
+<tr><td class="nw">专家级提示词库</td><td>试点场景所需提示词（试点一约 3 条起步）</td><td>试点所在域出场景，BU 统一维护</td></tr>
+<tr><td class="nw">部门级知识库</td><td>产品口径、合规红线、试点 SOP 三类先行入库</td><td>各域出内容，统一入口</td></tr>
+<tr><td class="nw">高频智能体</td><td>试点场景所需 1–2 个（先以"人工触发 + 已批工具"方式运行，不建平台）</td><td class="nw">BU 统一定义</td></tr>
+<tr><td class="nw">信息雷达</td><td class="nw">二期再建</td><td class="nw">—</td></tr>
 </tbody>
 </table></div>
 <p>试点期 L1 底座只取<strong>提示词库</strong>与<strong>知识库</strong>两件作为最小集，其余组件随横向扩展逐步加入。</p>
@@ -327,10 +439,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>要件</th><th>含义</th><th>反例</th></tr></thead>
 <tbody>
-<tr><td><span class="tag tag-blue">触发</span></td><td>什么事件自动启动</td><td>"有空的时候跑一下"</td></tr>
-<tr><td><span class="tag tag-red">护栏</span></td><td>哪些节点必须人审、错了怎么回滚</td><td>全自动直出对外内容</td></tr>
-<tr><td><span class="tag tag-green">回写</span></td><td>结果写回系统，形成积累</td><td>产出散落在个人电脑里</td></tr>
-<tr><td><span class="tag tag-yellow">指标</span></td><td>周期/返工/往返可测</td><td>"大家都说好用"</td></tr>
+<tr><td><span class="tag">触发</span></td><td class="nw">什么事件自动启动</td><td>"有空的时候跑一下"</td></tr>
+<tr><td><span class="tag">护栏</span></td><td>哪些节点必须人审、错了怎么回滚</td><td>全自动直出对外内容</td></tr>
+<tr><td><span class="tag">回写</span></td><td>结果写回系统，形成积累</td><td>产出散落在个人电脑里</td></tr>
+<tr><td><span class="tag">指标</span></td><td>周期/返工/往返可测</td><td class="nw">"大家都说好用"</td></tr>
 </tbody>
 </table></div>
 <div class="card highlight"><p><strong>"建成"的判定标准</strong>：跑通 ≥3 次真实任务，且产出被下游接受 ≥1 次。</p></div>
@@ -339,15 +451,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <!-- 六、九大工作域场景库 -->
 <section class="section" id="s6">
 <h2 class="section-title">六、九大工作域场景库（L2，试点期标注优先级）</h2>
-<p class="note">图例：HITL 档位 —— 🔴 人审后执行（高风险）/ 🟡 AI 执行人事后查（中风险）/ 🟢 全自动（低风险）<br>试点期只跑第四节选定的 1–2 条；其余为场景库，供横向扩展阶段按同一模板逐域启用。</p>
+<p class="note">图例：HITL 档位 —— <span class="risk risk-h">人审后执行（高风险）</span> / <span class="risk risk-m">AI 执行人事后查（中风险）</span> / <span class="risk risk-l">全自动（低风险）</span><br>试点期只跑第四节选定的 1–2 条；其余为场景库，供横向扩展阶段按同一模板逐域启用。</p>
 
 <h3 class="section-subtitle">6.1 运营部 · 数据分析</h3>
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>周/月报自动生成</td><td>取数、清洗、图表、初稿</td><td>口径定义、结论判断</td><td>🟡</td><td>出数耗时（目标值待基线设定）</td><td><span class="tag tag-star">★ 试点一</span></td></tr>
-<tr><td>异常监控与归因</td><td>各渠道引流/开户/入金/成交异常识别、初步归因、同步风控线索</td><td>确认"是否真异常"、处置决策</td><td>🟡</td><td>异常发现→同步时长</td><td>二期</td></tr>
-<tr><td>转化漏斗问答</td><td>自然语言查数、节点转化率下钻</td><td>增长点判断</td><td>🟢</td><td>取数需求排队时长</td><td>二期（需先定数据权限）</td></tr>
+<tr><td class="nw">周/月报自动生成</td><td>取数、清洗、图表、初稿</td><td>口径定义、结论判断</td><td><span class="risk risk-m">中</span></td><td>出数耗时（目标值待基线设定）</td><td><span class="tag tag-pilot">试点一</span></td></tr>
+<tr><td class="nw">异常监控与归因</td><td>各渠道引流/开户/入金/成交异常识别、初步归因、同步风控线索</td><td>确认"是否真异常"、处置决策</td><td><span class="risk risk-m">中</span></td><td>异常发现→同步时长</td><td class="nw">二期</td></tr>
+<tr><td class="nw">转化漏斗问答</td><td>自然语言查数、节点转化率下钻</td><td class="nw">增长点判断</td><td><span class="risk risk-l">低</span></td><td class="nw">取数需求排队时长</td><td>二期（需先定数据权限）</td></tr>
 </tbody>
 </table></div>
 
@@ -355,9 +467,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>合规预检</td><td>收益承诺、误导表述自动拦截并标注</td><td>终审与责任承担</td><td>🔴</td><td>送审返工率（基线待测）</td><td><span class="tag tag-blue">试点二候选</span></td></tr>
-<tr><td>内容生产流水线</td><td>选题清单、科普初稿、一稿多平台改写</td><td>调性把关、事实核对、合规终审</td><td>🔴</td><td>单条全链路耗时</td><td>二期</td></tr>
-<tr><td>评论运营</td><td>评论分类、常见问题标准答复建议</td><td>敏感问题回复、导流话术判断</td><td>🟡</td><td>答疑响应时长</td><td>二期</td></tr>
+<tr><td class="nw">合规预检</td><td>收益承诺、误导表述自动拦截并标注</td><td class="nw">终审与责任承担</td><td><span class="risk risk-h">高</span></td><td>送审返工率（基线待测）</td><td><span class="tag tag-cand">试点二候选</span></td></tr>
+<tr><td class="nw">内容生产流水线</td><td>选题清单、科普初稿、一稿多平台改写</td><td>调性把关、事实核对、合规终审</td><td><span class="risk risk-h">高</span></td><td class="nw">单条全链路耗时</td><td class="nw">二期</td></tr>
+<tr><td class="nw">评论运营</td><td>评论分类、常见问题标准答复建议</td><td>敏感问题回复、导流话术判断</td><td><span class="risk risk-m">中</span></td><td class="nw">答疑响应时长</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 
@@ -365,10 +477,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>分层与名单</td><td>客户分层自动更新、到期/续投名单生成与优先级排序</td><td>分层策略、触达时机判断</td><td>执行 🟢 / 规则变更 🔴</td><td>名单更新频率</td><td>二期</td></tr>
-<tr><td>触达文案</td><td>分层适配的短信与 PUSH 文案批量生成、多版本变体、发送时机与频次建议</td><td>安抚类与敏感内容终审、频次确认</td><td>🔴</td><td>触达点击率、转化率</td><td>二期</td></tr>
-<tr><td>推送内容编排</td><td>产品资讯/投教内容的分层选配与推送编排</td><td>内容适配与时机判断</td><td>🟡</td><td>推送点击率</td><td>二期</td></tr>
-<tr><td>诉求归类回传</td><td>客户诉求自动分类、同步产品/渠道端</td><td>复杂个案处理</td><td>🟡</td><td>诉求闭环率</td><td>二期</td></tr>
+<tr><td class="nw">分层与名单</td><td>客户分层自动更新、到期/续投名单生成与优先级排序</td><td>分层策略、触达时机判断</td><td>执行 <span class="risk risk-l">低</span> / 规则变更 <span class="risk risk-h">高</span></td><td class="nw">名单更新频率</td><td class="nw">二期</td></tr>
+<tr><td class="nw">触达文案</td><td>分层适配的短信与 PUSH 文案批量生成、多版本变体、发送时机与频次建议</td><td>安抚类与敏感内容终审、频次确认</td><td><span class="risk risk-h">高</span></td><td>触达点击率、转化率</td><td class="nw">二期</td></tr>
+<tr><td class="nw">推送内容编排</td><td>产品资讯/投教内容的分层选配与推送编排</td><td>内容适配与时机判断</td><td><span class="risk risk-m">中</span></td><td class="nw">推送点击率</td><td class="nw">二期</td></tr>
+<tr><td class="nw">诉求归类回传</td><td>客户诉求自动分类、同步产品/渠道端</td><td class="nw">复杂个案处理</td><td><span class="risk risk-m">中</span></td><td class="nw">诉求闭环率</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 
@@ -376,10 +488,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>原型与交互设计</td><td>根据 PRD 生成原型设计图初稿、交互稿初稿与多方案变体，复用历史组件</td><td>交互与体验判断、品牌一致性终审</td><td>🟡</td><td>需求到交互稿周期</td><td>二期</td></tr>
-<tr><td>营销素材生产</td><td>落地页/海报/banner 基于模板的初稿生成、多尺寸多渠道适配</td><td>品牌与体验判断</td><td>🟡</td><td>单素材交付周期、月产能</td><td>二期</td></tr>
-<tr><td>营销素材自检</td><td>必备要素（风险提示位、披露位）自动检查</td><td>终审</td><td>🔴</td><td>返工率</td><td>二期</td></tr>
-<tr><td>设计资产库</td><td>组件沉淀、复用检索</td><td>收录标准判断</td><td>🟢</td><td>复用率</td><td>二期</td></tr>
+<tr><td class="nw">原型与交互设计</td><td>根据 PRD 生成原型设计图初稿、交互稿初稿与多方案变体，复用历史组件</td><td>交互与体验判断、品牌一致性终审</td><td><span class="risk risk-m">中</span></td><td class="nw">需求到交互稿周期</td><td class="nw">二期</td></tr>
+<tr><td class="nw">营销素材生产</td><td>落地页/海报/banner 基于模板的初稿生成、多尺寸多渠道适配</td><td class="nw">品牌与体验判断</td><td><span class="risk risk-m">中</span></td><td>单素材交付周期、月产能</td><td class="nw">二期</td></tr>
+<tr><td class="nw">营销素材自检</td><td>必备要素（风险提示位、披露位）自动检查</td><td class="nw">终审</td><td><span class="risk risk-h">高</span></td><td class="nw">返工率</td><td class="nw">二期</td></tr>
+<tr><td class="nw">设计资产库</td><td>组件沉淀、复用检索</td><td class="nw">收录标准判断</td><td><span class="risk risk-l">低</span></td><td class="nw">复用率</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 
@@ -387,8 +499,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>需求文档辅助</td><td>文档初稿、验收标准草拟、竞品功能对照</td><td>需求取舍与优先级</td><td>🟡</td><td>需求评审轮次</td><td>二期</td></tr>
-<tr><td>用户反馈洞察</td><td>反馈聚类、JTBD 提炼、优先级建议</td><td>采纳决策</td><td>🟡</td><td>需求变更率</td><td>二期</td></tr>
+<tr><td class="nw">需求文档辅助</td><td>文档初稿、验收标准草拟、竞品功能对照</td><td class="nw">需求取舍与优先级</td><td><span class="risk risk-m">中</span></td><td class="nw">需求评审轮次</td><td class="nw">二期</td></tr>
+<tr><td class="nw">用户反馈洞察</td><td>反馈聚类、JTBD 提炼、优先级建议</td><td class="nw">采纳决策</td><td><span class="risk risk-m">中</span></td><td class="nw">需求变更率</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 
@@ -396,8 +508,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>页面开发</td><td>根据 PRD 与设计交互稿的组件化页面开发：代码生成、样式还原自动走查、活动页/H5 快速搭建</td><td>架构设计、还原度与交互细节验收</td><td>🟡</td><td>单页面工时</td><td>二期</td></tr>
-<tr><td>埋点自检</td><td>埋点覆盖与上报异常自动检查</td><td>埋点方案定义</td><td>🟢</td><td>埋点缺失率</td><td>二期</td></tr>
+<tr><td class="nw">页面开发</td><td>根据 PRD 与设计交互稿的组件化页面开发：代码生成、样式还原自动走查、活动页/H5 快速搭建</td><td>架构设计、还原度与交互细节验收</td><td><span class="risk risk-m">中</span></td><td class="nw">单页面工时</td><td class="nw">二期</td></tr>
+<tr><td class="nw">埋点自检</td><td>埋点覆盖与上报异常自动检查</td><td class="nw">埋点方案定义</td><td><span class="risk risk-l">低</span></td><td class="nw">埋点缺失率</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 <p class="note"><strong>协作链</strong>：产品 PRD → 设计（原型图/交互稿）→ 前端（页面开发）→ 后端（业务逻辑与接口）。PRD 与设计交互稿是前端开工的两项前置输入，缺一即形成等待。</p>
@@ -406,8 +518,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>接口文档与单测</td><td>接口文档生成、单测生成</td><td><strong>资金/交易/权限逻辑必须人写人审</strong></td><td>🔴</td><td>接口交付周期</td><td>二期</td></tr>
-<tr><td>日志异常归因</td><td>错误日志聚类、初步归因</td><td>修复决策</td><td>🟡</td><td>故障定位时长</td><td>二期</td></tr>
+<tr><td class="nw">接口文档与单测</td><td>接口文档生成、单测生成</td><td><strong>资金/交易/权限逻辑必须人写人审</strong></td><td><span class="risk risk-h">高</span></td><td class="nw">接口交付周期</td><td class="nw">二期</td></tr>
+<tr><td class="nw">日志异常归因</td><td>错误日志聚类、初步归因</td><td class="nw">修复决策</td><td><span class="risk risk-m">中</span></td><td class="nw">故障定位时长</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 
@@ -415,9 +527,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>通话摘要与工单</td><td>通话/进线摘要自动生成、工单自动创建流转</td><td>工单处置、销售承诺把关</td><td>🟡</td><td>单通处理时长</td><td><span class="tag tag-blue">试点二候选</span>（前提：数据方案先定）</td></tr>
-<tr><td>话术提示</td><td>实时话术建议（含合规提示）</td><td>异议处理、承诺判断</td><td>🔴</td><td>一次解决率</td><td>二期</td></tr>
-<tr><td>全量质检</td><td>100% 通话质检替代抽检、违规自动标记</td><td>违规裁定与处罚</td><td>🟡</td><td>质检覆盖率</td><td>二期</td></tr>
+<tr><td class="nw">通话摘要与工单</td><td>通话/进线摘要自动生成、工单自动创建流转</td><td>工单处置、销售承诺把关</td><td><span class="risk risk-m">中</span></td><td class="nw">单通处理时长</td><td><span class="tag tag-cand">试点二候选</span>（前提：数据方案先定）</td></tr>
+<tr><td class="nw">话术提示</td><td>实时话术建议（含合规提示）</td><td>异议处理、承诺判断</td><td><span class="risk risk-h">高</span></td><td class="nw">一次解决率</td><td class="nw">二期</td></tr>
+<tr><td class="nw">全量质检</td><td>100% 通话质检替代抽检、违规自动标记</td><td class="nw">违规裁定与处罚</td><td><span class="risk risk-m">中</span></td><td class="nw">质检覆盖率</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 
@@ -425,9 +537,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="wide">
 <thead><tr><th>工作流</th><th>AI 承担</th><th>人承担</th><th>HITL</th><th>指标</th><th>试点</th></tr></thead>
 <tbody>
-<tr><td>上架材料自检</td><td>申报材料清单齐套校验、常见被拒原因预检、多市场差异对照</td><td>材料真实性、对外沟通</td><td>🔴</td><td>一次提审通过率</td><td>二期</td></tr>
-<tr><td>渠道情报雷达</td><td>竞品渠道模式、渠道政策变化监测简报</td><td>准入判断</td><td>🟢</td><td>简报周期</td><td>二期</td></tr>
-<tr><td>渠道效果分析</td><td>渠道引流/开户/入金数据归因分析</td><td>预算与准入决策</td><td>🟡</td><td>渠道评估周期</td><td>二期</td></tr>
+<tr><td class="nw">上架材料自检</td><td>申报材料清单齐套校验、常见被拒原因预检、多市场差异对照</td><td>材料真实性、对外沟通</td><td><span class="risk risk-h">高</span></td><td class="nw">一次提审通过率</td><td class="nw">二期</td></tr>
+<tr><td class="nw">渠道情报雷达</td><td>竞品渠道模式、渠道政策变化监测简报</td><td class="nw">准入判断</td><td><span class="risk risk-l">低</span></td><td class="nw">简报周期</td><td class="nw">二期</td></tr>
+<tr><td class="nw">渠道效果分析</td><td>渠道引流/开户/入金数据归因分析</td><td class="nw">预算与准入决策</td><td><span class="risk risk-m">中</span></td><td class="nw">渠道评估周期</td><td class="nw">二期</td></tr>
 </tbody>
 </table></div>
 <div class="card danger"><p><strong>闸门规则</strong>：任何场景立项时必须回答——"这条提效让哪个下游环节少做一件事？"答不出的，归为个人效率工具，不计入 BU 变革成果。</p></div>
@@ -453,9 +565,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>档位</th><th>机制</th><th>适用</th></tr></thead>
 <tbody>
-<tr><td>🔴 Human-in-the-Loop</td><td>AI 生成 → 人审 → 批准才执行</td><td>对外内容、费率与披露、话术终审、资金结算、分层规则变更</td></tr>
-<tr><td>🟡 Human-on-the-Loop</td><td>AI 执行 → 人事后检查 → 可回滚</td><td>报表、摘要、归类、质检标记</td></tr>
-<tr><td>🟢 Human-out-of-the-Loop</td><td>全自动，异常才报警</td><td>名单日常更新、埋点自检、监控提醒</td></tr>
+<tr><td><span class="risk risk-h">Human-in-the-Loop</span></td><td>AI 生成 → 人审 → 批准才执行</td><td>对外内容、费率与披露、话术终审、资金结算、分层规则变更</td></tr>
+<tr><td><span class="risk risk-m">Human-on-the-Loop</span></td><td>AI 执行 → 人事后检查 → 可回滚</td><td>报表、摘要、归类、质检标记</td></tr>
+<tr><td><span class="risk risk-l">Human-out-of-the-Loop</span></td><td>全自动，异常才报警</td><td>名单日常更新、埋点自检、监控提醒</td></tr>
 </tbody>
 </table></div>
 <p><strong>判断准绳</strong>：可逆→自动化，不可逆→人确认。</p>
@@ -463,21 +575,21 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table class="mid">
 <thead><tr><th>#</th><th>红线</th><th>适用范围</th><th>理由</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>适当性与风险揭示的最终判断</td><td>存量理财业务</td><td>监管要求机构担责</td></tr>
-<tr><td>2</td><td>对客户的收益承诺与销售承诺</td><td>两业务通用</td><td>不可逆 + 投诉高发</td></tr>
-<tr><td>3</td><td>费率与年化成本披露的终稿</td><td>分期商城（二期）</td><td>AI 只做初稿与预检</td></tr>
-<tr><td>4</td><td>征信授权流程的呈现方式</td><td>分期商城（二期）</td><td>必须单独、明示、可撤回</td></tr>
-<tr><td>5</td><td>资金结算指令</td><td>两业务通用</td><td>AI 只做对账建议，不下资金指令</td></tr>
+<tr><td class="nw">1</td><td>适当性与风险揭示的最终判断</td><td class="nw">存量理财业务</td><td class="nw">监管要求机构担责</td></tr>
+<tr><td class="nw">2</td><td>对客户的收益承诺与销售承诺</td><td class="nw">两业务通用</td><td>不可逆 + 投诉高发</td></tr>
+<tr><td class="nw">3</td><td>费率与年化成本披露的终稿</td><td class="nw">分期商城（二期）</td><td>AI 只做初稿与预检</td></tr>
+<tr><td class="nw">4</td><td>征信授权流程的呈现方式</td><td class="nw">分期商城（二期）</td><td>必须单独、明示、可撤回</td></tr>
+<tr><td class="nw">5</td><td class="nw">资金结算指令</td><td class="nw">两业务通用</td><td>AI 只做对账建议，不下资金指令</td></tr>
 </tbody>
 </table></div>
 <h3 class="section-subtitle">8.3 数据安全底线</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>措施</th><th>要求</th></tr></thead>
 <tbody>
-<tr><td>工具白名单</td><td>只用 BU 批准的 AI 工具，禁用未审批工具处理客户数据（防 Shadow AI）</td></tr>
-<tr><td>数据分级</td><td>客户身份、交易、资金数据不出企业环境</td></tr>
+<tr><td class="nw">工具白名单</td><td>只用 BU 批准的 AI 工具，禁用未审批工具处理客户数据（防 Shadow AI）</td></tr>
+<tr><td class="nw">数据分级</td><td>客户身份、交易、资金数据不出企业环境</td></tr>
 <tr><td><strong>客户数据类场景的前置条件</strong></td><td>凡涉及客户数据的工作流（如通话摘要），<strong>立项前必须先确定</strong>：工具形态（云端 API / 本地部署）、脱敏方案、留痕方式。<strong>方案未定，场景不启动</strong></td></tr>
-<tr><td>留痕</td><td>所有 AI 参与的对外产出，保留生成与审核记录</td></tr>
+<tr><td class="nw">留痕</td><td>所有 AI 参与的对外产出，保留生成与审核记录</td></tr>
 </tbody>
 </table></div>
 </section>
@@ -485,21 +597,21 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <!-- 九、90 天实施计划 -->
 <section class="section" id="s9">
 <h2 class="section-title">九、90 天实施计划（减负版：试点先跑通）</h2>
-<div class="phase">
-<div class="phase-card"><h4>阶段一 · D1–D15</h4><p>提案定稿与试点立项</p></div>
-<div class="phase-card"><h4>阶段二 · D16–D45</h4><p>试点跑通</p></div>
-<div class="phase-card"><h4>阶段三 · D46–D75</h4><p>横向扩展</p></div>
-<div class="phase-card"><h4>阶段四 · D76–D90</h4><p>复盘定版</p></div>
+<div class="timeline">
+<div class="tl-phase"><div class="tl-head"><span class="tl-name">阶段一</span><span class="tl-range">D1–D15</span></div><div class="tl-bar"></div><div class="tl-title">提案定稿与试点立项</div></div>
+<div class="tl-phase key"><div class="tl-head"><span class="tl-name">阶段二</span><span class="tl-range">D16–D45</span></div><div class="tl-bar"></div><div class="tl-title">试点跑通</div></div>
+<div class="tl-phase"><div class="tl-head"><span class="tl-name">阶段三</span><span class="tl-range">D46–D75</span></div><div class="tl-bar"></div><div class="tl-title">横向扩展</div></div>
+<div class="tl-phase"><div class="tl-head"><span class="tl-name">阶段四</span><span class="tl-range">D76–D90</span></div><div class="tl-bar"></div><div class="tl-title">复盘定版</div></div>
 </div>
 
 <h3 class="section-subtitle">阶段一：提案定稿与试点立项（D1–D15）</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
-<tr><td>提案定稿、试点场景最终确认（试点二二选一）</td><td>定稿提案 + 试点立项单</td><td>BU 负责人</td></tr>
-<tr><td>试点场景基线测量（仅试点相关域，其余域不占用）</td><td>试点一基线（出数耗时）；试点二基线（返工率或单通时长）</td><td>试点域负责人</td></tr>
-<tr><td>工具白名单确认（现有已批工具盘点）</td><td>白名单 1 页</td><td>试点协调人（小宋）</td></tr>
-<tr><td>知识库与提示词库最小集上线</td><td>提示词 3 条 + 知识库三类目录</td><td>试点域 + 小宋</td></tr>
+<tr><td>提案定稿、试点场景最终确认（试点二二选一）</td><td>定稿提案 + 试点立项单</td><td class="nw">BU 负责人</td></tr>
+<tr><td>试点场景基线测量（仅试点相关域，其余域不占用）</td><td>试点一基线（出数耗时）；试点二基线（返工率或单通时长）</td><td class="nw">试点域负责人</td></tr>
+<tr><td>工具白名单确认（现有已批工具盘点）</td><td class="nw">白名单 1 页</td><td>试点协调人（小宋）</td></tr>
+<tr><td>知识库与提示词库最小集上线</td><td>提示词 3 条 + 知识库三类目录</td><td class="nw">试点域 + 小宋</td></tr>
 </tbody>
 </table></div>
 
@@ -507,9 +619,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
-<tr><td>试点一（周/月报自动生成）四件套建成</td><td>跑通 ≥3 次真实任务、下游接受 ≥1 次、改前/改后实测</td><td>数据域</td></tr>
-<tr><td>试点二（合规预检 或 通话摘要）四件套建成</td><td>同上</td><td>自媒体域 / 客服域</td></tr>
-<tr><td>双周数据通报</td><td>实测数简报 ×2 期</td><td>小宋</td></tr>
+<tr><td>试点一（周/月报自动生成）四件套建成</td><td>跑通 ≥3 次真实任务、下游接受 ≥1 次、改前/改后实测</td><td class="nw">数据域</td></tr>
+<tr><td>试点二（合规预检 或 通话摘要）四件套建成</td><td class="nw">同上</td><td>自媒体域 / 客服域</td></tr>
+<tr><td class="nw">双周数据通报</td><td>实测数简报 ×2 期</td><td class="nw">小宋</td></tr>
 </tbody>
 </table></div>
 
@@ -517,8 +629,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
-<tr><td>试点模板复制到 2–3 个域（每域 1 条工作流）</td><td>每域 1 条按四件套建成</td><td>各域负责人</td></tr>
-<tr><td>试点域指标持续周更</td><td>周数据 ×4 期</td><td>试点域</td></tr>
+<tr><td>试点模板复制到 2–3 个域（每域 1 条工作流）</td><td>每域 1 条按四件套建成</td><td class="nw">各域负责人</td></tr>
+<tr><td>试点域指标持续周更</td><td class="nw">周数据 ×4 期</td><td class="nw">试点域</td></tr>
 </tbody>
 </table></div>
 
@@ -526,9 +638,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>任务</th><th>交付</th><th>责任</th></tr></thead>
 <tbody>
-<tr><td>试点数据汇总报告</td><td>试点一/二的改前/改后完整对比</td><td>小宋 + 试点域</td></tr>
-<tr><td>组织形态建议报告</td><td>基于试点数据，提交"是否扩大、是否引入小队制与考核调整（届时会同 HRBP 评估）"的建议</td><td>BU 负责人</td></tr>
-<tr><td>资产盘点</td><td>提示词库、知识库、试点模板、基线测量方法四项可交付</td><td>小宋</td></tr>
+<tr><td class="nw">试点数据汇总报告</td><td>试点一/二的改前/改后完整对比</td><td class="nw">小宋 + 试点域</td></tr>
+<tr><td class="nw">组织形态建议报告</td><td>基于试点数据，提交"是否扩大、是否引入小队制与考核调整（届时会同 HRBP 评估）"的建议</td><td class="nw">BU 负责人</td></tr>
+<tr><td class="nw">资产盘点</td><td>提示词库、知识库、试点模板、基线测量方法四项可交付</td><td class="nw">小宋</td></tr>
 </tbody>
 </table></div>
 
@@ -536,11 +648,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>#</th><th>标准</th><th>判定方式</th></tr></thead>
 <tbody>
-<tr><td>A1</td><td>试点一端到端跑通，有改前/改后实测数据</td><td>数据对比表</td></tr>
-<tr><td>A2</td><td>试点二按同标准跑通（或因数据方案未定而明确顺延并记录原因）</td><td>数据对比表 / 顺延记录</td></tr>
-<tr><td>A3</td><td>横向扩展 ≥2 个域，每域 1 条工作流按四件套建成（跑通 ≥3 次、下游接受 ≥1 次）</td><td>各域数据表</td></tr>
-<tr><td>A4</td><td>四项资产可交付（提示词库、知识库、试点模板、基线方法），下一域可直接复用</td><td>资产清单</td></tr>
-<tr><td>A5</td><td>全程零红线事件</td><td>治理台账</td></tr>
+<tr><td class="nw">A1</td><td>试点一端到端跑通，有改前/改后实测数据</td><td class="nw">数据对比表</td></tr>
+<tr><td class="nw">A2</td><td>试点二按同标准跑通（或因数据方案未定而明确顺延并记录原因）</td><td>数据对比表 / 顺延记录</td></tr>
+<tr><td class="nw">A3</td><td>横向扩展 ≥2 个域，每域 1 条工作流按四件套建成（跑通 ≥3 次、下游接受 ≥1 次）</td><td class="nw">各域数据表</td></tr>
+<tr><td class="nw">A4</td><td>四项资产可交付（提示词库、知识库、试点模板、基线方法），下一域可直接复用</td><td class="nw">资产清单</td></tr>
+<tr><td class="nw">A5</td><td class="nw">全程零红线事件</td><td class="nw">治理台账</td></tr>
 </tbody>
 </table></div>
 <p class="note">分期商城的里程碑（意图书、上架等）<strong>不在本验收表内</strong>，由业务线单独考核。</p>
@@ -552,11 +664,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>层</th><th>指标</th><th>用途</th></tr></thead>
 <tbody>
-<tr><td>流程层（新引入）</td><td>周期时间 / 返工率 / 协同往返次数 / 异常恢复时长</td><td>证明"工作方式真的变了"</td></tr>
+<tr><td class="nw">流程层（新引入）</td><td>周期时间 / 返工率 / 协同往返次数 / 异常恢复时长</td><td>证明"工作方式真的变了"</td></tr>
 <tr><td><strong>试点层（本期核心）</strong></td><td>试点一：出数耗时；试点二：返工率或单通处理时长（改前/改后）</td><td>90 天交卷的主证据</td></tr>
-<tr><td>部门层（扩展域）</td><td>三档提效口径各域实测</td><td>横向扩展阶段逐域纳入</td></tr>
-<tr><td>经营层</td><td>存量理财：续投率、转化漏斗；分期商城（上线后）：复购率、授信通过率；投放启动后：CAC</td><td>长期观察，90 天内以基线记录为主，不做归因承诺</td></tr>
-<tr><td>治理层</td><td>红线事件数、Shadow AI 检查</td><td>守底线</td></tr>
+<tr><td class="nw">部门层（扩展域）</td><td>三档提效口径各域实测</td><td>横向扩展阶段逐域纳入</td></tr>
+<tr><td class="nw">经营层</td><td>存量理财：续投率、转化漏斗；分期商城（上线后）：复购率、授信通过率；投放启动后：CAC</td><td>长期观察，90 天内以基线记录为主，不做归因承诺</td></tr>
+<tr><td class="nw">治理层</td><td>红线事件数、Shadow AI 检查</td><td class="nw">守底线</td></tr>
 </tbody>
 </table></div>
 <p>流程层属"早期指标"，盯进展不赌终局。</p>
@@ -569,10 +681,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>成本项</th><th>说明</th></tr></thead>
 <tbody>
-<tr><td>工具采购</td><td><strong>零新增</strong>——使用已批准的 AI 工具与现有系统</td></tr>
-<tr><td>系统开发</td><td><strong>零新增</strong>——试点场景不依赖新系统（分期商城供应商后台属业务立项成本，不占试点预算）</td></tr>
-<tr><td>人力投入</td><td>试点域每周约 0.5 天 × 2 个域 × 4–6 周；试点协调人（小宋）每周约 1 天</td></tr>
-<tr><td>制度成本</td><td><strong>零</strong>——不动考核、不动编制、不动汇报关系</td></tr>
+<tr><td class="nw">工具采购</td><td><strong>零新增</strong>——使用已批准的 AI 工具与现有系统</td></tr>
+<tr><td class="nw">系统开发</td><td><strong>零新增</strong>——试点场景不依赖新系统（分期商城供应商后台属业务立项成本，不占试点预算）</td></tr>
+<tr><td class="nw">人力投入</td><td>试点域每周约 0.5 天 × 2 个域 × 4–6 周；试点协调人（小宋）每周约 1 天</td></tr>
+<tr><td class="nw">制度成本</td><td><strong>零</strong>——不动考核、不动编制、不动汇报关系</td></tr>
 </tbody>
 </table></div>
 <h3 class="section-subtitle">11.2 收益测算方式（不预设数字）</h3>
@@ -590,50 +702,50 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>指标</th><th>健康区间</th><th>异常说明什么</th></tr></thead>
 <tbody>
-<tr><td>输入 : 输出</td><td>3:1 ~ 8:1</td><td>超过 15:1，说明成本基本花在"反复喂背景"上</td></tr>
-<tr><td>单任务 token 成本</td><td>同类任务横向对比</td><td>同类任务相差 5 倍以上，说明流程不同，不能只归因于能力差异</td></tr>
-<tr><td>缓存命中率</td><td>目标 &gt;50%</td><td>偏低，说明提示词结构有问题（稳定内容没有前置）</td></tr>
+<tr><td class="nw">输入 : 输出</td><td>3:1 ~ 8:1</td><td>超过 15:1，说明成本基本花在"反复喂背景"上</td></tr>
+<tr><td>单任务 token 成本</td><td class="nw">同类任务横向对比</td><td>同类任务相差 5 倍以上，说明流程不同，不能只归因于能力差异</td></tr>
+<tr><td class="nw">缓存命中率</td><td>目标 &gt;50%</td><td>偏低，说明提示词结构有问题（稳定内容没有前置）</td></tr>
 </tbody>
 </table></div>
 <p>多数团队真正的问题，<strong>八成出在输入侧，而不在输出侧</strong>。大家都在纠结"AI 话太多"，实际开支在"你喂得太多"。</p>
 <h3 class="section-subtitle">12.2 轮数的影响远大于字数</h3>
 <p>第 n 轮的输入 ＝ 系统提示 ＋ 此前全部历史 ＋ 本轮提问——<strong>历史会被反复重发</strong>。</p>
-<div class="card highlight"><p>示意模型：设固定上下文 10 单位、每轮新增 5 单位，则 20 轮对话的累计成本是 5 轮的 <strong>10 倍</strong>；最后 5 轮（16–20 轮）单独就吃掉 <strong>40%</strong>。</p></div>
+<div class="card"><p>示意模型：设固定上下文 10 单位、每轮新增 5 单位，则 20 轮对话的累计成本是 5 轮的 <strong>10 倍</strong>；最后 5 轮（16–20 轮）单独就吃掉 <strong>40%</strong>。</p></div>
 <p>这条规律推翻了一个常见误区：大家都在教"话别说得太啰嗦"，但少说几个字省下的钱，<strong>不到"少聊几轮"的十分之一</strong>。真正的杠杆是——<strong>换任务就开新会话，不要让一个会话拖到二三十轮。</strong></p>
 <h3 class="section-subtitle">12.3 六类 token 漏失与对应改法</h3>
 <div class="table-wrap"><table class="mid">
 <thead><tr><th>漏失类型</th><th>典型表现</th><th>具体改法</th><th>怎么验证有效</th></tr></thead>
 <tbody>
-<tr><td>轮数失控</td><td>一个会话聊到 30 轮，改动一直在原会话里继续</td><td>任务一换就开新会话；会话超过 15 轮，先让 AI 总结成 200 字交接稿再开新会话</td><td>平均单会话轮数下降</td></tr>
-<tr><td>上下文过载</td><td>"帮我看下这个项目"，它把整个仓库扫一遍</td><td>直接给路径和行号；先让它定位，再只读那几行</td><td>单次输入 token 下降</td></tr>
-<tr><td>背景重述</td><td>每个新会话把业务、规范和偏好重讲一遍</td><td>建项目规范文件（如 AGENTS.md / CLAUDE.md），把规范、目录、禁用项固定写进去</td><td>会话首轮输入变小</td></tr>
-<tr><td>返工迭代</td><td>让它直接改，改错再改，反复三轮</td><td>改成两段式：先出方案和影响面，确认后再执行</td><td>单任务轮数减少</td></tr>
-<tr><td>模型错配</td><td>改错别字、格式化也调最强模型</td><td>按任务分级：检索、改写用轻量模型；架构决策与复杂推理才用强模型</td><td>高阶模型调用占比</td></tr>
-<tr><td>不复用</td><td>日报、周报、竞品分析每次从零重做</td><td>固化成模板、脚本或 Skill，一次性投入后长期使用</td><td>同类任务的边际成本</td></tr>
+<tr><td class="nw">轮数失控</td><td>一个会话聊到 30 轮，改动一直在原会话里继续</td><td>任务一换就开新会话；会话超过 15 轮，先让 AI 总结成 200 字交接稿再开新会话</td><td>平均单会话轮数下降</td></tr>
+<tr><td class="nw">上下文过载</td><td>"帮我看下这个项目"，它把整个仓库扫一遍</td><td>直接给路径和行号；先让它定位，再只读那几行</td><td>单次输入 token 下降</td></tr>
+<tr><td class="nw">背景重述</td><td>每个新会话把业务、规范和偏好重讲一遍</td><td>建项目规范文件（如 AGENTS.md / CLAUDE.md），把规范、目录、禁用项固定写进去</td><td class="nw">会话首轮输入变小</td></tr>
+<tr><td class="nw">返工迭代</td><td>让它直接改，改错再改，反复三轮</td><td>改成两段式：先出方案和影响面，确认后再执行</td><td class="nw">单任务轮数减少</td></tr>
+<tr><td class="nw">模型错配</td><td>改错别字、格式化也调最强模型</td><td>按任务分级：检索、改写用轻量模型；架构决策与复杂推理才用强模型</td><td class="nw">高阶模型调用占比</td></tr>
+<tr><td class="nw">不复用</td><td>日报、周报、竞品分析每次从零重做</td><td>固化成模板、脚本或 Skill，一次性投入后长期使用</td><td>同类任务的边际成本</td></tr>
 </tbody>
 </table></div>
-<div class="card highlight"><p><strong>最反直觉但收益最大的一条</strong>：重复性任务不该每次"推理"，应该变成"资产"。日报、周报、代码审查、竞品抓取这类活儿，第一次花 5000 token 摸索，第二次就该花 500 token 调用。差别不在提示词写得好不好，<strong>而在有没有把它固化成工具</strong>。</p></div>
+<div class="card"><p><strong>最反直觉但收益最大的一条</strong>：重复性任务不该每次"推理"，应该变成"资产"。日报、周报、代码审查、竞品抓取这类活儿，第一次花 5000 token 摸索，第二次就该花 500 token 调用。差别不在提示词写得好不好，<strong>而在有没有把它固化成工具</strong>。</p></div>
 <h3 class="section-subtitle">12.4 每周 5 分钟自查清单</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>#</th><th>检查项</th><th>判定与动作</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>单会话是否经常超过 15 轮？</td><td>超了就是轮数漏失</td></tr>
-<tr><td>2</td><td>这个会话里是否有 2 个以上不相关的任务？</td><td>有就该拆分会话</td></tr>
-<tr><td>3</td><td>是否让 AI 读了整个目录，或整篇长文档？</td><td>改用"先定位后精读"</td></tr>
-<tr><td>4</td><td>同一个背景，今天是否讲了第二次？</td><td>第二次就该写进配置文件</td></tr>
-<tr><td>5</td><td>输出长度是需求的 3 倍以上吗？</td><td>加一句"只给结论或 diff，不要解释"</td></tr>
-<tr><td>6</td><td>这个任务，上周是不是也这么问过一遍？</td><td>是的话，该固化了</td></tr>
-<tr><td>7</td><td>平台显示缓存命中率是多少？</td><td>低于 50% 要查提示词结构</td></tr>
+<tr><td class="nw">1</td><td>单会话是否经常超过 15 轮？</td><td class="nw">超了就是轮数漏失</td></tr>
+<tr><td class="nw">2</td><td>这个会话里是否有 2 个以上不相关的任务？</td><td class="nw">有就该拆分会话</td></tr>
+<tr><td class="nw">3</td><td>是否让 AI 读了整个目录，或整篇长文档？</td><td>改用"先定位后精读"</td></tr>
+<tr><td class="nw">4</td><td>同一个背景，今天是否讲了第二次？</td><td>第二次就该写进配置文件</td></tr>
+<tr><td class="nw">5</td><td>输出长度是需求的 3 倍以上吗？</td><td>加一句"只给结论或 diff，不要解释"</td></tr>
+<tr><td class="nw">6</td><td>这个任务，上周是不是也这么问过一遍？</td><td class="nw">是的话，该固化了</td></tr>
+<tr><td class="nw">7</td><td>平台显示缓存命中率是多少？</td><td>低于 50% 要查提示词结构</td></tr>
 </tbody>
 </table></div>
 <h3 class="section-subtitle">12.5 纳入试点期的四个动作</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>#</th><th>动作</th><th>落点</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>token 用量纳入试点实测记录，与出数耗时、返工率并列作为成本侧指标</td><td>阶段二试点跑通、阶段四复盘报告</td></tr>
-<tr><td>2</td><td>每个试点场景在四件套的"指标"栏补充上述三项判断指标</td><td>第五节四件套</td></tr>
-<tr><td>3</td><td>重复性场景（周报、月报、竞品检索）在试点结束时必须固化为模板、脚本或 Skill，形成复用资产</td><td>验收标准 A4（资产可交付）</td></tr>
-<tr><td>4</td><td>本节经验值待试点期实测校准后，替换为 BU 自身基线</td><td>阶段四复盘定版</td></tr>
+<tr><td class="nw">1</td><td>token 用量纳入试点实测记录，与出数耗时、返工率并列作为成本侧指标</td><td>阶段二试点跑通、阶段四复盘报告</td></tr>
+<tr><td class="nw">2</td><td>每个试点场景在四件套的"指标"栏补充上述三项判断指标</td><td class="nw">第五节四件套</td></tr>
+<tr><td class="nw">3</td><td>重复性场景（周报、月报、竞品检索）在试点结束时必须固化为模板、脚本或 Skill，形成复用资产</td><td>验收标准 A4（资产可交付）</td></tr>
+<tr><td class="nw">4</td><td>本节经验值待试点期实测校准后，替换为 BU 自身基线</td><td class="nw">阶段四复盘定版</td></tr>
 </tbody>
 </table></div>
 <p class="note"><strong>与"零新增采购"的关系</strong>：本节不改变试点期零采购的口径，只解决"用量不可见"的问题——<strong>成本不是省在采购上，而是省在会话结构上</strong>。</p>
@@ -645,12 +757,12 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>风险</th><th>表现</th><th>对策</th></tr></thead>
 <tbody>
-<tr><td>AI 演示化</td><td>Demo 漂亮、指标不动</td><td>只认流程层四指标 + 试点实测，不认"会用 AI"人数</td></tr>
-<tr><td>伪提效混入</td><td>无下游收益的场景报成绩</td><td>闸门规则："让哪个下游环节少做一件事"答不出不计入</td></tr>
-<tr><td>基线缺失</td><td>90 天后无法证明成果</td><td>阶段一先测基线，无基线的工作流不准上线</td></tr>
+<tr><td class="nw">AI 演示化</td><td>Demo 漂亮、指标不动</td><td>只认流程层四指标 + 试点实测，不认"会用 AI"人数</td></tr>
+<tr><td class="nw">伪提效混入</td><td>无下游收益的场景报成绩</td><td>闸门规则："让哪个下游环节少做一件事"答不出不计入</td></tr>
+<tr><td class="nw">基线缺失</td><td>90 天后无法证明成果</td><td>阶段一先测基线，无基线的工作流不准上线</td></tr>
 <tr><td>机检误判（试点二若选 C）</td><td>红线词库误拦或漏拦</td><td>词库以历史退回原因为种子、月度校准、漏拦案例回灌</td></tr>
 <tr><td>客户数据越界（试点二若选 B）</td><td>通话数据进未审批工具</td><td>8.3 前置条件：数据方案未定，场景不启动</td></tr>
-<tr><td>门禁方不配合（二期）</td><td>评审无排期</td><td>前置确认单提前谈，二期启动前完成</td></tr>
+<tr><td>门禁方不配合（二期）</td><td class="nw">评审无排期</td><td>前置确认单提前谈，二期启动前完成</td></tr>
 </tbody>
 </table></div>
 </section>
@@ -661,13 +773,95 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="table-wrap"><table>
 <thead><tr><th>#</th><th>决策</th><th>状态 / 建议</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>试点一确认：周/月报自动生成（数据分析域）</td><td>建议 ✓，待你确认</td></tr>
-<tr><td>2</td><td>试点二二选一：合规预检（自媒体域）vs 通话摘要（客服域）</td><td>若通话数据的工具与脱敏方案两周内能定，选 B；否则选 C</td></tr>
-<tr><td>3</td><td>试点协调人（小宋）授权范围</td><td>建议明确：跨域拉通、数据通报、无审批权</td></tr>
-<tr><td>4</td><td>工具白名单确认（以现有已批工具盘点为准）</td><td>D15 前完成</td></tr>
-<tr><td>5</td><td>分期商城二期试点的时间点</td><td>待业务立项节奏确定后再定，本期不做承诺</td></tr>
+<tr><td class="nw">1</td><td>试点一确认：周/月报自动生成（数据分析域）</td><td>建议通过，待你确认</td></tr>
+<tr><td class="nw">2</td><td>试点二二选一：合规预检（自媒体域）vs 通话摘要（客服域）</td><td>若通话数据的工具与脱敏方案两周内能定，选 B；否则选 C</td></tr>
+<tr><td class="nw">3</td><td>试点协调人（小宋）授权范围</td><td>建议明确：跨域拉通、数据通报、无审批权</td></tr>
+<tr><td class="nw">4</td><td>工具白名单确认（以现有已批工具盘点为准）</td><td class="nw">D15 前完成</td></tr>
+<tr><td class="nw">5</td><td>分期商城二期试点的时间点</td><td>待业务立项节奏确定后再定，本期不做承诺</td></tr>
 </tbody>
 </table></div>
+</section>
+
+<!-- 十五、案例：AI 短剧智能协作工作流 -->
+<section class="section" id="s15">
+<h2 class="section-title">十五、案例：AI 短剧智能协作工作流（市场运营部先行实践）</h2>
+<div class="meta-row">
+  <span><b>来源</b> 市场运营部《AI 短剧智能协作工作流白皮书（交互式 SOP）》</span>
+  <span><b>配套实例</b> 《小满食舍》15 集 × 90 秒</span>
+  <span><b>性质</b> BU 内先行实践，不列入第四节试点，不进入 90 天验收</span>
+</div>
+<div class="card highlight">
+  <p><strong>一句话做法</strong>：把 AI 当作一个"虚拟剧组"——每个对话是一个专业岗位，通过文件系统交接、用质量门禁兜底；剪辑等需要审美判断的环节由人工岗位承担。它在一条完整业务流程上，同时用到了本提案的判断-执行-校验分工、四件套、人审分档和资产化。</p>
+</div>
+
+<h3 class="section-subtitle">15.1 四个核心要素</h3>
+<ol class="criteria">
+<li><span class="num">01</span><strong>Agent 智能体</strong><span class="desc">每个对话里的 AI 承担一个明确角色（编剧、分镜、提示词……），负责具体干活；剪辑等专业环节由人工岗位承担</span></li>
+<li><span class="num">02</span><strong>Skill 技能库</strong><span class="desc">预置的专业规范与脚本，告诉智能体每个工种的标准做法，相当于岗位培训手册</span></li>
+<li><span class="num">03</span><strong>多对话协作</strong><span class="desc">一个工位一个独立对话，上下文干净、输出精准，通过文件系统交接而非记忆</span></li>
+<li><span class="num">04</span><strong>质量门禁</strong><span class="desc">每道工序完成后必须通过校验，不通过不进入下一步，把问题拦在早期</span></li>
+</ol>
+
+<h3 class="section-subtitle">15.2 八个工位，一条流水线</h3>
+<div class="table-wrap"><table class="wide">
+<thead><tr><th>#</th><th>工位</th><th>承担方</th><th>产出</th><th>HITL</th></tr></thead>
+<tbody>
+<tr><td class="nw">1</td><td class="nw">故事开发</td><td>智能体 · short-drama-develop</td><td>创作简报、故事引擎、分集地图</td><td><span class="risk risk-m">中</span></td></tr>
+<tr><td class="nw">2</td><td class="nw">编剧</td><td>智能体 · short-drama-write</td><td class="nw">剧本.md</td><td><span class="risk risk-m">中</span></td></tr>
+<tr><td class="nw">3</td><td class="nw">视觉设定</td><td>智能体 · short-drama-assets</td><td>视觉设定.md（人物、场景、道具、连续性锁）</td><td><span class="risk risk-m">中</span></td></tr>
+<tr><td class="nw">4</td><td class="nw">图片提示词</td><td>智能体 · short-drama-image-prompts</td><td>图片提示词.md（角色板、场景板、道具板）</td><td><span class="risk risk-m">中</span></td></tr>
+<tr><td class="nw">5</td><td class="nw">分镜</td><td>智能体 · short-drama-storyboard</td><td>分镜.md（镜头 + 冻结关键帧）</td><td><span class="risk risk-m">中</span></td></tr>
+<tr><td class="nw">6</td><td class="nw">视频提示词</td><td>智能体 · short-drama-video-prompts</td><td>视频提示词.md（与镜头一一对应）</td><td><span class="risk risk-m">中</span></td></tr>
+<tr><td class="nw">7</td><td class="nw">生产执行</td><td>智能体 · short-drama-produce</td><td>制作成果/ 下的图片与视频</td><td><span class="risk risk-h">高</span></td></tr>
+<tr><td class="nw">8</td><td class="nw">剪辑</td><td>剪辑师（剪映 / Premiere / After Effects / Audition）</td><td>剪辑单.md 与成片</td><td><span class="tag">人工岗位</span></td></tr>
+</tbody>
+</table></div>
+<p class="note">HITL 一列按第八节三档口径对照：1–6 号工位由智能体执行、过质量门禁后进入下一工位；7 号生产执行须创作者看过预览并明确确认后才运行；8 号剪辑整体保留为人工二度创作。④ 图片提示词与 ⑤ 分镜可以并行，审查质检贯穿全程。</p>
+
+<h3 class="section-subtitle">15.3 协作机制</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>机制</th><th>做法</th></tr></thead>
+<tbody>
+<tr><td class="nw">单职责多对话</td><td>一个工位一个独立对话；新对话先读上游文件，不凭记忆和想象补事实</td></tr>
+<tr><td class="nw">文件交接</td><td>每集五份 Markdown（剧本、视觉设定、分镜、图片提示词、视频提示词）是唯一真相，所有交接以落盘文档为准</td></tr>
+<tr><td class="nw">固定编号传参</td><td>SHOT-（镜头）、IMG-（图片提示词条目）、LOCK-（连续性锁）、REF-（参考图槽位）等编号写进文档；下游只引用编号，不转述内容，看到同一编号就指向同一个东西</td></tr>
+<tr><td class="nw">质量门禁</td><td>跨文档结构校验 + 视频提示词静态回归，ERROR 数为 0 才进入下一步；自动拦截"同上 / 承接上段"式偷懒继承和高风险词</td></tr>
+<tr><td class="nw">生产硬闸门</td><td>prepare 预览 → 创作者明确确认 → run 执行；"继续 / 预算没问题"不算确认，成功或失败后重跑都要重新确认</td></tr>
+<tr><td class="nw">剪辑权责边界</td><td>删镜、缩镜、调顺序、做包装属于剪辑师的取舍；改台词、改镜头职责、改故事要回到对应上游工位</td></tr>
+<tr><td class="nw">规范迭代</td><td>发现问题 → 复盘记录 → 更新规范 → 新项目验证后固化为基线，调整项留痕可追溯</td></tr>
+</tbody>
+</table></div>
+
+<h3 class="section-subtitle">15.4 六条红线</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>红线</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td class="nw">1</td><td class="nw">不靠记忆假设</td><td>新对话先读上游文件，不凭记忆和想象补事实</td></tr>
+<tr><td class="nw">2</td><td>不把"无参考图"当文生授权</td><td>普通的"无"表示待补，只有创作者明确选择才走文生视频</td></tr>
+<tr><td class="nw">3</td><td>不绕质量门强行续跑</td><td>校验不过就停下修正，通过后再进入下一阶段</td></tr>
+<tr><td class="nw">4</td><td>单镜不超过 15 秒</td><td>硬性规则，分镜时长要在模型原生时长范围内</td></tr>
+<tr><td class="nw">5</td><td>不替创作者确认生产</td><td>"继续 / 预算没问题"不算确认，不得代填</td></tr>
+<tr><td class="nw">6</td><td>不擅自加台词、改设定</td><td>引用的中文必须能在剧本或视觉设定里找到原字</td></tr>
+</tbody>
+</table></div>
+
+<h3 class="section-subtitle">15.5 对照本提案：验证了什么，还缺什么</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>本提案要求</th><th>短剧工作流里的做法</th></tr></thead>
+<tbody>
+<tr><td>判断-执行-校验分工（3.1）</td><td>七个工位由智能体执行；生产确认与剪辑取舍由人负责；跨文档校验脚本承担校验</td></tr>
+<tr><td>四件套 · 触发（第五节）</td><td>上游文档落盘即启动下一工位，下游先读上游文件再开工</td></tr>
+<tr><td class="nw">四件套 · 护栏</td><td>质量门禁 + 生产硬闸门（prepare → 确认 → run），错了停下修正</td></tr>
+<tr><td class="nw">四件套 · 回写</td><td>五份 Markdown 与"制作成果/"目录落在项目内，跨文档用固定编号引用</td></tr>
+<tr><td class="nw">四件套 · 指标</td><td>门禁结果可判定（ERROR 数为 0）；周期、返工尚未按本提案三档口径实测</td></tr>
+<tr><td>人审分档（8.1）</td><td>生产执行属"人审后执行"；剪辑整体保留为人工岗位</td></tr>
+<tr><td>每阶段资产化（3.2 铁律二）</td><td>Skill 技能库、文档模板与"复盘沉淀/"目录，项目结束后资产留在项目内，下一部剧可直接复用</td></tr>
+<tr><td>闸门规则（第六节）</td><td>固定编号传参让下游不必转述、核对内容；门禁把错误拦在投产前，减少生产与剪辑返工</td></tr>
+</tbody>
+</table></div>
+<div class="card">
+  <p><strong>备注</strong>：<a class="doc-link" href="aiDuanjuFlow.html" target="_blank" rel="noopener">AI 短剧智能协作工作流详细案例解析</a></p>
+</div>
 </section>
 
 <!-- 版本说明 -->
@@ -676,6 +870,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="card">
   <p><strong>本版说明</strong>：本文件为 V2.0 提案的对外报告形态，删除了版本演化记录、评审过程编号、方法论出处引用与编辑性提示，实质内容与 V2.0 一致。方法论出处对照见原文件。</p>
   <p style="margin-top:.6rem"><strong>增补说明</strong>：第十二节「AI 使用成本与 token 治理指标」为 V2.0 定稿后新增，内容由 BU 负责人提供。其中区间与倍数为通用经验值，非本 BU 实测，试点期以实际用量校准后替换为自身基线。</p>
+  <p style="margin-top:.6rem"><strong>案例说明</strong>：第十五节「AI 短剧智能协作工作流」为后续增补，内容整理自市场运营部《AI 短剧智能协作工作流白皮书（交互式 SOP）》，作为 BU 内先行实践案例，不列入试点与 90 天验收。</p>
 </div>
 </section>
 
@@ -701,7 +896,170 @@ const toggleNav = (open) => document.body.classList.toggle('nav-open', open);
 document.getElementById('menuBtn').addEventListener('click', () =>
   toggleNav(!document.body.classList.contains('nav-open')));
 document.getElementById('sidebarMask').addEventListener('click', () => toggleNav(false));
-links.forEach(l => l.addEventListener('click', () => toggleNav(false)));
+// 目录跳转由脚本完成：嵌入式预览、内置浏览器等环境可能拦截 # 锚点链接
+links.forEach(l => l.addEventListener('click', (e) => {
+  const hash = l.getAttribute('href');
+  const target = document.querySelector(hash);
+  if (!target) return;
+  e.preventDefault();
+  toggleNav(false);
+  const offset = document.querySelector('.site-header').offsetHeight + 24;
+  window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+  links.forEach(x => x.classList.toggle('active', x === l));
+  try { history.replaceState(null, '', hash); } catch (err) { /* 部分环境不允许改地址栏 */ }
+}));
+
+// 打印
+document.getElementById('printBtn').addEventListener('click', () => {
+  toggleNav(false);
+  window.print();
+});
+
+// 导出 PDF：按需加载 html2pdf.js，依次尝试国内外 CDN
+const PDF_FILENAME = '金融渠道运营部 AI 组织变革与业务流程再造提案.pdf';
+const PDF_LIBS = [
+  'https://cdn.bootcdn.net/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+  'https://cdn.staticfile.net/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+  'https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+  'https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js'
+];
+const loadScript = (src) => new Promise((resolve, reject) => {
+  const s = document.createElement('script');
+  s.src = src;
+  s.onload = resolve;
+  s.onerror = () => { s.remove(); reject(new Error(src)); };
+  document.head.appendChild(s);
+});
+async function ensureHtml2pdf() {
+  if (window.html2pdf) return;
+  for (const src of PDF_LIBS) {
+    try { await loadScript(src); if (window.html2pdf) return; } catch (e) { /* 换下一个 CDN */ }
+  }
+  throw new Error('html2pdf 加载失败');
+}
+
+// html2canvas 不认识 oklch()，渲染前在副本里换算成 rgba()
+function oklchToRgba(body) {
+  const [main, alpha] = body.split('/');
+  const num = (v) => v.trim().endsWith('%') ? parseFloat(v) / 100 : parseFloat(v);
+  const [L, C, H] = main.trim().split(/\s+/).map(num);
+  const h = (H || 0) * Math.PI / 180, a = C * Math.cos(h), b = C * Math.sin(h);
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.2914855480 * b) ** 3;
+  const enc = (x) => {
+    x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
+    return Math.round(Math.min(1, Math.max(0, x)) * 255);
+  };
+  const r = enc(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s);
+  const g = enc(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s);
+  const bl = enc(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+  return `rgba(${r},${g},${bl},${alpha === undefined ? 1 : num(alpha)})`;
+}
+const fixOklch = (text) => text.replace(/oklch\(([^)]*)\)/g, (_, v) => oklchToRgba(v));
+function fixColors(doc) {
+  // 先关掉过渡动画：否则颜色换算时浏览器会插值出 oklab() 中间色，html2canvas 同样不认识
+  const still = doc.createElement('style');
+  still.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}';
+  doc.head.appendChild(still);
+  doc.querySelectorAll('style').forEach(st => { st.textContent = fixOklch(st.textContent); });
+  doc.querySelectorAll('[style]').forEach(el => {
+    const css = el.getAttribute('style');
+    if (css.includes('oklch(')) el.setAttribute('style', fixOklch(css));
+  });
+}
+
+// 每章单独起页（也让每次渲染的画布不至于过大，手机上更稳）
+function buildParts() {
+  const title = document.querySelector('.site-header h1').textContent;
+  const badge = document.querySelector('.site-header .badge').textContent;
+  const sections = [...document.querySelectorAll('.main > .section')];
+  const parts = [];
+  sections.forEach((sec, i) => {
+    // 末尾的「版本说明」并入上一章，不单独占一页
+    if (i === sections.length - 1 && !sec.id && parts.length) {
+      parts[parts.length - 1].appendChild(sec.cloneNode(true));
+      return;
+    }
+    const part = document.createElement('div');
+    part.className = 'pdf-part';
+    if (i === 0) {
+      const hdr = document.createElement('div');
+      hdr.className = 'pdf-header';
+      hdr.innerHTML = '<h1></h1><span class="badge"></span>';
+      hdr.querySelector('h1').textContent = title;
+      hdr.querySelector('.badge').textContent = badge;
+      part.appendChild(hdr);
+    }
+    part.appendChild(sec.cloneNode(true));
+    parts.push(part);
+  });
+  // 标题和紧随其后的表格/卡片绑在一起，避免标题落在页底、内容跑到下一页
+  // （放在最后统一处理，并入上一章的「版本说明」也能覆盖到）
+  parts.forEach(part => {
+    part.querySelectorAll('.section-title, .section-subtitle').forEach(h => {
+      const next = h.nextElementSibling;
+      if (!next || !next.matches('.table-wrap, .card, .criteria, .arch, .timeline')) return;
+      const keep = document.createElement('div');
+      keep.className = 'pdf-keep';
+      h.before(keep);
+      keep.append(h, next);
+    });
+  });
+  return parts;
+}
+
+const pdfBtn = document.getElementById('pdfBtn');
+pdfBtn.addEventListener('click', async () => {
+  const label = pdfBtn.querySelector('span');
+  pdfBtn.disabled = true;
+  label.textContent = '生成中…';
+  toggleNav(false);
+  // html2canvas 还会读取原页面 html/body 的背景色，导出期间临时换成等值 rgba
+  const roots = [document.documentElement, document.body];
+  const savedBg = roots.map(el => el.style.backgroundColor);
+  roots.forEach(el => {
+    el.style.backgroundColor = fixOklch(getComputedStyle(el).backgroundColor);
+  });
+  try {
+    await ensureHtml2pdf();
+    const opt = {
+      margin: [10, 10, 12, 10],
+      filename: PDF_FILENAME,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: {
+        scale: matchMedia('(max-width:800px)').matches ? 1.5 : 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        onclone: fixColors
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css'], avoid: ['.pdf-keep', '.table-wrap', 'tr', '.card', '.criteria li', '.arch', '.timeline', '.meta-row', '.note', '.section-subtitle', '.law-list li'] }
+    };
+    const parts = buildParts();
+    let worker = html2pdf().set(opt).from(parts[0]).toPdf();
+    parts.slice(1).forEach(part => {
+      worker = worker.get('pdf').then(pdf => pdf.addPage()).from(part).toContainer().toCanvas().toPdf();
+    });
+    await worker.get('pdf').then(pdf => {
+      const n = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= n; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(150);
+        pdf.text(`${i} / ${n}`, 105, 291, { align: 'center' });
+      }
+    }).save();
+  } catch (e) {
+    console.error(e);
+    alert('PDF 生成失败（可能是网络无法加载 PDF 组件）。\n可以点「打印」，在打印窗口中选择「另存为 PDF」。');
+  } finally {
+    roots.forEach((el, i) => { el.style.backgroundColor = savedBg[i]; });
+    pdfBtn.disabled = false;
+    label.textContent = '导出 PDF';
+  }
+});
 </script>
 </body>
 </html>

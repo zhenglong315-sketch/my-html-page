@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 短剧智能协作工作流白皮书（交互式 SOP）</title>
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  --bg:#f4f7fb; --surface:#fff; --surface-2:#eef3f9; --surface-3:#e3ecf5;
+  --accent:#1f7fb8; --accent-2:#22a3b8; --accent-soft:#e3f1f9;
+  --text-1:#14253a; --text-2:#43556b; --text-3:#7b8ba0;
+  --border:#dde6f0; --border-strong:#c2d0e0;
+  --good:#1f9d6b; --bad:#d64550; --warn:#d98a26;
+  --radius:14px; --radius-sm:10px; --shadow:0 6px 22px rgba(20,40,70,.08); --shadow-lg:0 14px 40px rgba(20,40,70,.14);
+  --sidebar-w:270px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  background:var(--bg);color:var(--text-1);font-size:17px;line-height:1.85;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:#fff}
+
+/* ============ 顶部阅读进度条 ============ */
+#progress{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:1000;transition:width .1s}
+
+/* ============ 侧边导航 ============ */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);
+  border-right:1px solid var(--border);padding:26px 0;overflow-y:auto;z-index:900}
+.sidebar .brand{padding:0 24px 20px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.sidebar .brand .logo{font-size:18px;font-weight:800;color:var(--text-1);line-height:1.4}
+.sidebar .brand .sub{font-size:12.5px;color:var(--text-3);margin-top:4px}
+.nav-group{padding:10px 24px 2px;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase}
+.nav-link{display:block;padding:9px 24px;color:var(--text-2);font-size:15px;text-decoration:none;border-left:3px solid transparent;transition:all .15s;cursor:pointer}
+.nav-link:hover{background:var(--surface-2);color:var(--accent)}
+.nav-link.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent);font-weight:700}
+.nav-link .n{display:inline-block;width:24px;color:var(--text-3);font-weight:700;font-size:13px}
+.nav-link.active .n{color:var(--accent)}
+
+/* ============ 主内容 ============ */
+.main{margin-left:var(--sidebar-w);padding:0 48px 100px}
+.wrap{max-width:1060px;margin:0 auto}
+section.block{padding:64px 0 24px;scroll-margin-top:20px}
+.sec-tag{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+h2.sec-title{font-size:38px;line-height:1.3;margin-bottom:14px;letter-spacing:-.01em}
+h3.sub{font-size:23px;margin:34px 0 14px}
+.lead{font-size:19px;color:var(--text-2);margin-bottom:8px}
+p{color:var(--text-2)}
+b,strong{color:var(--text-1)}
+a.inline{color:var(--accent)}
+
+/* ============ Hero ============ */
+.hero{padding:96px 0 60px;background:linear-gradient(160deg,#eaf3fb 0%,#f4f7fb 60%);border-bottom:1px solid var(--border);margin-bottom:8px}
+.hero .kicker{font-size:14px;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:56px;line-height:1.18;letter-spacing:-.02em;margin-bottom:22px}
+.hero h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.intro{font-size:20px;color:var(--text-2);max-width:760px;margin-bottom:30px}
+.hero .btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:10px;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;border:1.5px solid transparent;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#1a6fa2;transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn-ghost{background:var(--surface);color:var(--accent);border-color:var(--border-strong)}
+.btn-ghost:hover{border-color:var(--accent);background:var(--accent-soft)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.badge{display:inline-block;padding:6px 16px;border-radius:999px;font-size:14px;font-weight:600;background:var(--surface);color:var(--accent);border:1px solid var(--border-strong)}
+
+/* ============ 卡片 ============ */
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;box-shadow:var(--shadow)}
+.card h4{font-size:19px;margin-bottom:8px}
+.card p{font-size:15.5px}
+.card .ic{font-size:28px;margin-bottom:8px}
+.card-hover{transition:transform .15s,box-shadow .15s}
+.card-hover:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+
+/* ============ 交互流程图（可点击节点） ============ */
+.flow{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0}
+.fnode{flex:1;min-width:120px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:18px 12px;text-align:center;cursor:pointer;transition:all .15px;position:relative}
+.fnode:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.fnode .ic{font-size:26px}
+.fnode h5{font-size:15.5px;margin:6px 0 2px}
+.fnode p{font-size:12.5px;color:var(--text-3);line-height:1.4}
+.fnode.manual{border-color:var(--good)}
+.fnode.manual:hover{border-color:var(--good)}
+.fnode.manual .tagm{position:absolute;top:6px;right:6px;font-size:10px;background:var(--good);color:#fff;padding:1px 7px;border-radius:99px}
+.fhint{font-size:14px;color:var(--text-3);margin-top:4px}
+
+/* ============ 折叠面板（工位） ============ */
+.acc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+.acc-head{display:flex;align-items:center;gap:18px;padding:22px 28px;cursor:pointer;user-select:none;transition:background .15s}
+.acc-head:hover{background:var(--surface-2)}
+.acc-num{flex-shrink:0;width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px}
+.acc.manual .acc-num{background:#e2f5ec;color:var(--good)}
+.acc-head .htxt{flex:1}
+.acc-head .htxt h4{font-size:21px;margin:0}
+.acc-head .htxt .meta{font-size:14px;color:var(--text-3)}
+.acc-head .chev{flex-shrink:0;font-size:22px;color:var(--text-3);transition:transform .25s}
+.acc.open .acc-head .chev{transform:rotate(180deg)}
+.js .acc-body{max-height:0;overflow:hidden}
+.acc-body{transition:max-height .35s ease}
+.acc-inner{padding:0 28px 28px;border-top:1px solid var(--border)}
+.acc-inner .row{display:grid;grid-template-columns:130px 1fr;gap:8px 18px;padding:18px 0;border-bottom:1px dashed var(--border)}
+.acc-inner .row:last-child{border-bottom:none}
+.acc-inner .rk{font-size:14px;font-weight:700;color:var(--text-3);padding-top:2px}
+.acc-inner .rv{font-size:15.5px;color:var(--text-2)}
+.acc-inner ul{padding-left:20px}.acc-inner li{font-size:15.5px;color:var(--text-2);margin-bottom:5px}
+
+/* 实例框 */
+.instance{margin-top:18px;border-left:4px solid var(--accent);background:var(--surface-2);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:18px 24px}
+.acc.manual .instance{border-left-color:var(--good)}
+.instance .lab{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.acc.manual .instance .lab{color:var(--good)}
+.instance p{font-size:15px;margin:0}
+
+/* ============ 代码块 + 复制 ============ */
+.codewrap{position:relative;margin:18px 0}
+.codeblock{background:#13263b;color:#dce8f5;border-radius:var(--radius-sm);padding:22px 26px;
+  font-family:"SF Mono",Consolas,"Courier New",monospace;font-size:15px;line-height:1.75;overflow-x:auto;white-space:pre}
+.codeblock .c{color:#6fb9d6}.codeblock .g{color:#7fe0b8}.codeblock .y{color:#f0c987}
+.copy-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.12);color:#dce8f5;border:1px solid rgba(255,255,255,.2);
+  padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .15s}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.done{background:var(--good);border-color:var(--good);color:#fff}
+.qcode{font-family:Consolas,monospace;font-size:14px;background:var(--surface-2);padding:2px 8px;border-radius:6px;color:var(--text-1)}
+
+/* ============ 六类固定编号（字段/传参说明） ============ */
+.idguide{background:var(--accent-soft);border:1px solid #c9e2f2;border-radius:var(--radius-sm);padding:20px 24px;margin:6px 0 22px}
+.idguide p{font-size:15.5px;color:var(--text-1);margin-bottom:10px;line-height:1.8}
+.idguide p:last-child{margin-bottom:0}
+.idflow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:14px}
+.idstep{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-size:13.5px;color:var(--text-2);line-height:1.6}
+.idstep b{display:block;color:var(--accent);font-size:13.5px;margin-bottom:3px}
+.idarrow{display:flex;align-items:center;color:var(--accent);font-weight:800;font-size:18px}
+.idgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.idcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 20px;box-shadow:var(--shadow)}
+.idcard .idtop{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.idcard .idtop .qcode{font-size:13.5px}
+.idcard .idcn{font-size:14.5px;font-weight:800;color:var(--text-1)}
+.idcard .iddesc{font-size:14.5px;color:var(--text-2);margin-bottom:12px;line-height:1.7}
+.idcard .idmeta{font-size:12.5px;color:var(--text-3);margin-bottom:5px}
+.idcard .idex{font-family:Consolas,monospace;font-size:12.5px;background:var(--surface-2);border-radius:6px;padding:7px 9px;color:var(--text-1);line-height:1.5;word-break:break-all}
+@media(max-width:980px){.idgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.idgrid{grid-template-columns:1fr}.idarrow{transform:rotate(90deg)}}
+
+/* ============ 标签页 Tabs ============ */
+.tabs{margin:22px 0}
+.tab-bar{display:flex;gap:6px;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab-btn{padding:11px 22px;font-size:16px;font-weight:700;background:none;border:none;color:var(--text-3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-pane{display:none}.tab-pane.active{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ============ 表格 ============ */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);margin:20px 0}
+table.t{width:100%;border-collapse:collapse;font-size:15.5px}
+table.t th,table.t td{padding:14px 18px;text-align:left;border-bottom:1px solid var(--border)}
+table.t th{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);background:var(--surface-2)}
+table.t tr:last-child td{border-bottom:none}
+table.t td.c{text-align:center;font-variant-numeric:tabular-nums}
+
+/* ============ 可勾选清单 ============ */
+.checklist{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin:20px 0;overflow:hidden}
+.ci{display:flex;align-items:center;gap:16px;padding:16px 24px;border-bottom:1px solid var(--border);cursor:pointer}
+.ci:last-child{border-bottom:none}
+.ci input{display:none}
+.ci .box{flex-shrink:0;width:26px;height:26px;border:2px solid var(--border-strong);border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ci .box::after{content:"✓";color:#fff;font-weight:900;opacity:0;transition:opacity .15s}
+.ci input:checked + .box{background:var(--good);border-color:var(--good)}
+.ci input:checked + .box::after{opacity:1}
+.ci .txt{flex:1;font-size:16.5px}
+.ci input:checked ~ .txt{color:var(--text-3);text-decoration:line-through}
+.ci .tag{font-size:13px;color:var(--text-3);background:var(--surface-2);padding:3px 12px;border-radius:999}
+.ci .tag.manual{background:#e2f5ec;color:var(--good)}
+.reset-check{margin-top:12px;font-size:14px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600}
+
+/* ============ 回到顶部 ============ */
+#toTop{position:fixed;right:34px;bottom:34px;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;
+  border:none;font-size:22px;cursor:pointer;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .25s;z-index:800}
+#toTop.show{opacity:1;pointer-events:auto}
+#toTop:hover{background:#1a6fa2;transform:translateY(-3px)}
+
+/* ============ 滚动进入动画 ============ */
+.reveal{transition:opacity .6s ease,transform .6s ease}
+.js .reveal{opacity:0;transform:translateY(24px)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:1100px){
+  :root{--sidebar-w:0}
+  .sidebar{display:none}
+  .main{margin-left:0;padding:0 22px 80px}
+  .hero h1{font-size:40px}.g3,.g4{grid-template-columns:1fr 1fr}
+}
+@media (max-width:680px){.g2,.g3,.g4{grid-template-columns:1fr}.hero h1{font-size:34px}h2.sec-title{font-size:30px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ============ 侧边导航 ============ -->
+<nav class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="logo">AI 短剧<br>智能协作工作流</div>
+    <div class="sub">交互式 SOP 白皮书</div>
+  </div>
+  <div class="nav-group">入门</div>
+  <a class="nav-link" data-target="hero">开篇</a>
+  <a class="nav-link" data-target="concept">核心概念</a>
+  <a class="nav-link" data-target="panorama">工作流全景</a>
+  <div class="nav-group">准备</div>
+  <a class="nav-link" data-target="prepare">开工前确认</a>
+  <a class="nav-link" data-target="structure">目录结构</a>
+  <a class="nav-link" data-target="init">项目初始化</a>
+  <div class="nav-group">九工位实操</div>
+  <a class="nav-link" data-target="stations"><span class="n">1-8</span>工位总览</a>
+  <div class="nav-group">协作机制</div>
+  <a class="nav-link" data-target="handoff">多对话传参</a>
+  <a class="nav-link" data-target="gate">质量门禁</a>
+  <a class="nav-link" data-target="iterate">规范迭代</a>
+  <a class="nav-link" data-target="skillmap">Skill 全景</a>
+  <div class="nav-group">上手总结</div>
+  <a class="nav-link" data-target="checklist-sec">上手清单</a>
+  <a class="nav-link" data-target="redlines">红线避坑</a>
+  <a class="nav-link" data-target="compare">传统 vs AI</a>
+</nav>
+
+<div class="main">
+<div class="wrap">
+
+<!-- ============ Hero ============ -->
+<header class="hero" id="hero">
+  <div class="kicker">SOP · 标准作业程序 · 2026</div>
+  <h1>AI 短剧<span class="grad">智能协作</span><br>工作流白皮书</h1>
+  <p class="intro">这是一份可以直接操作的交互式指南：把 AI 当作一个"虚拟剧组"，每个对话是一个专业岗位，通过文件系统交接、用质量门禁兜底。照着点、照着做，零基础也能完成一部专业短剧。</p>
+  <div class="btns">
+    <a class="btn btn-primary" data-target="stations">开始九工位实操 →</a>
+    <a class="btn btn-ghost" data-target="checklist-sec">查看上手清单</a>
+  </div>
+  <div class="badges">
+    <span class="badge">小白可上手</span>
+    <span class="badge">线性实操路径</span>
+    <span class="badge">配套《小满食舍》实例</span>
+    <span class="badge">可折叠 / 可复制 / 可勾选</span>
+  </div>
+</header>
+
+<!-- ============ 核心概念 ============ -->
+<section class="block" id="concept">
+  <span class="sec-tag">Concept · 核心概念</span>
+  <h2 class="sec-title">四个核心要素，构成整套工作流</h2>
+  <p class="lead">先记住这四块，后面所有内容都围绕它们展开。</p>
+  <div class="grid g4 reveal">
+    <div class="card card-hover"><div class="ic">🤖</div><h4>Agent 智能体</h4><p>每个对话里的 AI，承担一个明确角色（编剧、分镜、提示词……），负责具体干活；剪辑等专业环节由人工岗位承担。</p></div>
+    <div class="card card-hover"><div class="ic">🧰</div><h4>Skill 技能库</h4><p>预置的专业规范与脚本，告诉 Agent 每个工种"标准做法是什么"，相当于岗位培训手册。</p></div>
+    <div class="card card-hover"><div class="ic">💬</div><h4>多对话协作</h4><p>一个工位一个独立对话，上下文干净、输出精准，通过文件系统交接而非记忆。</p></div>
+    <div class="card card-hover"><div class="ic">✅</div><h4>质量门禁</h4><p>每道工序完成后必须通过校验，不通过不进入下一步，把问题拦在早期。</p></div>
+  </div>
+
+  <h3 class="sub">六类固定编号：文档之间"传参"用的字段名</h3>
+  <div class="idguide">
+    <p>这些 <b>SHOT- / IMG- / LOCK-</b> 等前缀不是随便起的代号，而是写进每份文档的<b>"字段名"</b>——给每个镜头、每张图、每把锁一个唯一、固定的编号。</p>
+    <p>为什么必须这样？因为各个独立对话里的 AI <b>不共享记忆</b>，不能靠"那个东西"这种模糊说法。它们靠<b>写下编号来传递信息（也就是"传参"）</b>：看到同一个编号，就知道指向的是同一个东西，不会认错、不会传丢。</p>
+    <div class="idflow">
+      <div class="idstep"><b>① 写编号</b>上游文档给每个东西分配唯一编号，如 SHOT-EP001-001</div>
+      <div class="idarrow">→</div>
+      <div class="idstep"><b>② 传编号</b>下游对话只写编号，不复制内容、不靠记忆转述</div>
+      <div class="idarrow">→</div>
+      <div class="idstep"><b>③ 按编号取</b>打开对应文档，凭编号精确找到原内容</div>
+    </div>
+  </div>
+  <div class="idgrid reveal">
+    <div class="idcard">
+      <div class="idtop"><span class="qcode">SHOT-</span><span class="idcn">镜头编号</span></div>
+      <p class="iddesc">给每个镜头的唯一编号，是分镜与视频提示词之间互相对账的"主键"，修订时不随意换号。</p>
+      <div class="idmeta">所在文档：分镜</div>
+      <div class="idex">SHOT-EP001-001（EP001 第 1 个镜头）</div>
+    </div>
+    <div class="idcard">
+      <div class="idtop"><span class="qcode">MOTION-</span><span class="idcn">视频提示词编号</span></div>
+      <p class="iddesc">给每段视频生成的提示词编号，与镜头一一对应。《小满食舍》按"生成段落"用 SEG 编号，作用相同。</p>
+      <div class="idmeta">所在文档：视频提示词</div>
+      <div class="idex">SEG-EP001-01（规范里写作 MOTION-...）</div>
+    </div>
+    <div class="idcard">
+      <div class="idtop"><span class="qcode">IMG-</span><span class="idcn">图片提示词条目</span></div>
+      <p class="iddesc">角色/场景/道具的"提示词条目"编号，代表一段可复用的提示词，不等于已经生成的图片。</p>
+      <div class="idmeta">所在文档：图片提示词</div>
+      <div class="idex">IMG-CHAR-XIAOMAN-SHEET（周小满角色板）</div>
+    </div>
+    <div class="idcard">
+      <div class="idtop"><span class="qcode">LOCK-</span><span class="idcn">连续性锁</span></div>
+      <p class="iddesc">锁定跨镜头不能变的事实（服装、道具、发型），执行端逐字带走，防止画着画着就变了。</p>
+      <div class="idmeta">所在文档：视觉设定 / 图片提示词</div>
+      <div class="idex">LOCK-APRON（深色旧围裙）</div>
+    </div>
+    <div class="idcard">
+      <div class="idtop"><span class="qcode">REF-</span><span class="idcn">参考图槽位</span></div>
+      <p class="iddesc">项目里真实存在的图片，写清挂第几张、用途、控制范围，让模型按槽位正确使用参考图。</p>
+      <div class="idmeta">所在文档：图片提示词 / 分镜</div>
+      <div class="idex">REF-SHEET-LAYOUT（角色卡版面参考图）</div>
+    </div>
+    <div class="idcard">
+      <div class="idtop"><span class="qcode">PLAN-</span><span class="idcn">挂图计划（备用）</span></div>
+      <p class="iddesc">图片在项目外、由创作者自己在生成界面挂载时使用，只声明"该挂什么"，不谎称文件已存在。本项目实际用 REF，未触发。</p>
+      <div class="idmeta">所在文档：分镜（备用）</div>
+      <div class="idex">PLAN-SHOT-START（规范命名示例）</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 工作流全景（交互流程图） ============ -->
+<section class="block" id="panorama">
+  <span class="sec-tag">Overview · 全景图</span>
+  <h2 class="sec-title">九个工位，一条流水线（点击节点直达）</h2>
+  <p class="lead">前 7 个是 AI 工位，第 8 个剪辑是<b>人工岗位</b>。每个节点都可以点击，直接跳到对应工位详情。</p>
+  <div class="flow reveal" id="flowchart">
+    <div class="fnode" data-target="s1"><div class="ic">🎯</div><h5>① 故事开发</h5><p>简报/引擎/分集</p></div>
+    <div class="fnode" data-target="s2"><div class="ic">✍️</div><h5>② 编剧</h5><p>剧本.md</p></div>
+    <div class="fnode" data-target="s3"><div class="ic">🎨</div><h5>③ 视觉设定</h5><p>拆人物场景道具</p></div>
+    <div class="fnode" data-target="s4"><div class="ic">🖼️</div><h5>④ 图片提示词</h5><p>角色/场景板</p></div>
+    <div class="fnode" data-target="s5"><div class="ic">🎬</div><h5>⑤ 分镜</h5><p>镜头+关键帧</p></div>
+    <div class="fnode" data-target="s6"><div class="ic">📹</div><h5>⑥ 视频提示词</h5><p>图生/文生</p></div>
+    <div class="fnode" data-target="s7"><div class="ic">⚙️</div><h5>⑦ 生产执行</h5><p>出图/出视频</p></div>
+    <div class="fnode manual" data-target="s8"><span class="tagm">人工</span><div class="ic">✂️</div><h5>⑧ 剪辑</h5><p>剪辑师成片</p></div>
+  </div>
+  <p class="fhint">💡 ④ 图片提示词与 ⑤ 分镜是<b>兄弟分支，可以并行</b>，不必互相等待；审查质检贯穿全程，随时可插入。</p>
+</section>
+
+<!-- ============ 开工前确认 ============ -->
+<section class="block" id="prepare">
+  <span class="sec-tag">Preparation · 准备</span>
+  <h2 class="sec-title">开工前，一次问清这 8 项</h2>
+  <p class="lead">信息越明确，后面返工越少。这 8 项是初始化的输入，缺哪项就先确认哪项。</p>
+  <div class="tbl-wrap reveal">
+    <table class="t">
+      <thead><tr><th>序号</th><th>确认项</th><th>说明 / 示例</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>故事点子</td><td>一句话核心设定，如"25 岁孙女守爷爷留下的老食堂"</td></tr>
+        <tr><td class="c">2</td><td>题材类型</td><td>决定爽点与情绪节奏，如都市温情、家庭、逆袭</td></tr>
+        <tr><td class="c">3</td><td>集数 × 时长</td><td>如 15 集 × 90 秒，无合理默认，必须确认</td></tr>
+        <tr><td class="c">4</td><td>画幅</td><td>竖屏短剧统一 9:16</td></tr>
+        <tr><td class="c">5</td><td>视觉风格</td><td>如 urban_warm 都市温情写实电影感</td></tr>
+        <tr><td class="c">6</td><td>说明语言</td><td>创作者可读说明用中文</td></tr>
+        <tr><td class="c">7</td><td>提示词语言</td><td>图片/视频提示词用英文，更适配主流模型</td></tr>
+        <tr><td class="c">8</td><td>项目路径</td><td>明确存放目录，所有文件都在项目内交接</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 目录结构 ============ -->
+<section class="block" id="structure">
+  <span class="sec-tag">Structure · 目录结构</span>
+  <h2 class="sec-title">一套规范目录，五份文档是唯一真相</h2>
+  <p class="lead">每集按需维护<b>五份 Markdown</b>，不再另建平行的结构化数据；没有内容时不预建空文件。</p>
+  <div class="codewrap reveal">
+    <button class="copy-btn" type="button">复制</button>
+    <div class="codeblock">新短剧项目/
+├─ short-drama.json            <span class="c"># 项目配置（集数/时长/画幅/模型档案）</span>
+├─ 项目开发/                   <span class="c"># 可选：简报、故事引擎、分集地图</span>
+├─ 剧集/
+│   └─ EP001/
+│       ├─ 剧本.md             <span class="c"># ① 编剧</span>
+│       ├─ 视觉设定.md         <span class="c"># ② 人物/场景/道具/连续性锁</span>
+│       ├─ 分镜.md             <span class="c"># ③ 镜头 + 冻结关键帧</span>
+│       ├─ 图片提示词.md       <span class="c"># ④ 角色/场景/道具板</span>
+│       ├─ 视频提示词.md       <span class="c"># ⑤ 与镜头一一对应</span>
+│       └─ 制作成果/           <span class="c"># 生成的图片、视频素材</span>
+└─ 复盘沉淀/                   <span class="c"># 项目结束后的方法论沉淀</span></div>
+  </div>
+  <div class="grid g2 reveal">
+    <div class="card"><h4>五份文档对应 5 个工位</h4><p>剧本、视觉、分镜、图片提示词、视频提示词，各自落盘，跨文档通过稳定 ID 引用。</p></div>
+    <div class="card"><h4>剪辑单在素材生产后</h4><p>剪辑师根据真实素材记录取舍、入出点、声音与字幕，不参与上游故事创作。</p></div>
+  </div>
+</section>
+
+<!-- ============ 项目初始化 ============ -->
+<section class="block" id="init">
+  <span class="sec-tag">Init · 初始化</span>
+  <h2 class="sec-title">一条命令初始化，确定参数一次带上</h2>
+  <p class="lead">已经确认的事实（集数、时长、画幅、语言）在 init 时就写进配置，不要留空以后再补。</p>
+  <div class="codewrap reveal">
+    <button class="copy-btn" type="button">复制</button>
+    <div class="codeblock">python3 project_tool.py init ./小满食舍 \
+  --title "小满食舍" \
+  --language zh --prompt-language en \
+  --aspect-ratio 9:16 \
+  --episode-count 15 --target-seconds 90</div>
+  </div>
+  <div class="grid g3 reveal">
+    <div class="card card-hover"><h4>① 只建配置和空目录</h4><p>init 不预建空文件，第一次创作时才把文档写进对应集目录。</p></div>
+    <div class="card card-hover"><h4>② 状态只有两种</h4><p>生产档案只有 unset（未决定）与 accepted（已接受），不造中间状态。</p></div>
+    <div class="card card-hover"><h4>③ 用 status 复核</h4><p>初始化后运行 status，确认配置与后续模型档案都正确写入。</p></div>
+  </div>
+</section>
+
+<!-- ============ 九工位实操（折叠面板） ============ -->
+<section class="block" id="stations">
+  <span class="sec-tag">Stations · 九工位实操</span>
+  <h2 class="sec-title">点击展开每个工位，照着做</h2>
+  <p class="lead">每个工位卡片都可点击展开/收起，内含<b>职责、调用 Skill、操作步骤、《小满食舍》真实实例</b>。绿色卡片为人工岗位。</p>
+
+  <div class="acc reveal" id="s1">
+    <div class="acc-head"><div class="acc-num">1</div><div class="htxt"><h4>故事开发</h4><div class="meta">调用 Skill：short-drama-develop · 产出：创作简报 / 故事引擎 / 分集地图</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">把一个点子发展成能持续制造<b>选择、代价与状态变化</b>的故事系统，确定系列承诺、爽点节奏与分集边界。</div></div>
+      <div class="row"><div class="rk">操作步骤</div><div class="rv"><ul>
+        <li>明确题材与观看承诺，确定主角想要什么、阻力是什么。</li>
+        <li>搭故事引擎：核心冲突、人物关系、每集固定结构。</li>
+        <li>做分集地图，规划每集的钩子、转折、回报与集间交接。</li>
+      </ul></div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>规划为 15 集 × 90 秒。主角周小满（25 岁）守爷爷留下的老食堂，分集地图锁定每集"3 秒钩子 + 情绪转折 + 结尾悬念"，并在 episode-map.jsonl 中固化每集边界。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc reveal" id="s2">
+    <div class="acc-head"><div class="acc-num">2</div><div class="htxt"><h4>编剧</h4><div class="meta">调用 Skill：short-drama-write · 产出：剧本.md</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">把分集意图写成可表演、可拍摄、会改变故事状态的剧本，一级标题以集号开头，场次用固定格式。</div></div>
+      <div class="row"><div class="rk">专用标签</div><div class="rv"><span class="qcode">[VO]</span> 画外音 · <span class="qcode">[OS]</span> 画外对白 · <span class="qcode">[SFX]</span> 声音 · <span class="qcode">[画面文字]</span> · <span class="qcode">[连续性]</span> · <span class="qcode">[转场]</span>；对白写"角色（表演提示）：台词"。</div></div>
+      <div class="row"><div class="rk">操作步骤</div><div class="rv"><ul>
+        <li>读取本集进入状态、目标、转折与退出状态。</li>
+        <li>逐场写，每场都要改变信息、关系或情绪，无变化的场删掉。</li>
+        <li>反查因果、台词去 AI 味，不靠解释代替行动。</li>
+      </ul></div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>EP001 共 3 场，结尾画外音：<b>"爷爷走了。可火还热，锅还在。我也还在。"</b>一句话立住人物与全剧基调，动作叙述与对白严格区分，不混写。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc reveal" id="s3">
+    <div class="acc-head"><div class="acc-num">3</div><div class="htxt"><h4>视觉设定</h4><div class="meta">调用 Skill：short-drama-assets · 产出：视觉设定.md</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">从剧本拆出人物、造型、地点、道具，写识别锚点与<b>连续性锁</b>，不抢写剧情和镜头走位。</div></div>
+      <div class="row"><div class="rk">三个区分</div><div class="rv"><b>身份</b>（换了就不是同一人/物）· <b>变体</b>（身份不变但服装/状态改变）· <b>镜头瞬态</b>（姿势视线，归分镜）。</div></div>
+      <div class="row"><div class="rk">操作步骤</div><div class="rv"><ul>
+        <li>逐场找实体与可见描述，先不创建资产。</li>
+        <li>对每项决定新建、复用、变体或标记未决，含混不猜。</li>
+        <li>对跨镜不变的服装/道具/发型写 LOCK 锁，锁面用提示词语言逐字写。</li>
+      </ul></div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>EP001 写了 5 把连续性锁：<b>LOCK-APRON</b>（旧深色围裙）、LOCK-KETTLE（灶上水壶）、LOCK-RATTAN-CHAIR（旧藤椅）、LOCK-GARLIC（剥了一半的蒜）、LOCK-NOTEBOOK（贴胶带的旧笔记本），确保跨镜一致。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc reveal" id="s4">
+    <div class="acc-head"><div class="acc-num">4</div><div class="htxt"><h4>图片提示词</h4><div class="meta">调用 Skill：short-drama-image-prompts · 产出：图片提示词.md</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">把视觉事实写成可直接投产的角色板、场景板、道具板，每项用 IMG 编号，正文放在"可复制提示词"块。</div></div>
+      <div class="row"><div class="rk">编译顺序</div><div class="rv">主体与身份锚点 → 当前变体 → 构图/视角 → 光色/材质 → 背景边界 → 禁止项。</div></div>
+      <div class="row"><div class="rk">操作要点</div><div class="rv"><ul>
+        <li>角色卡必须挂头肩特写 + 全身三视图，人脸才能稳定。</li>
+        <li>换造型时生成新的造型角色卡，不拿单人造型板当角色卡。</li>
+        <li>每张参考图写清用途与控制范围，不写"全参考"。</li>
+      </ul></div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>角色卡为左侧头肩特写 + 右侧全身三视图，约 <b>7 头身</b>、肩颈修长、身形挺拔，使用模型 seedream 5.0 pro；全身遵循真实人体比例，禁止五五开或矮化。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc reveal" id="s5">
+    <div class="acc-head"><div class="acc-num">5</div><div class="htxt"><h4>分镜</h4><div class="meta">调用 Skill：short-drama-storyboard · 产出：分镜.md</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">把剧本和视觉事实转成有镜头职责、空间连续性和冻结关键帧的分镜，每镜一个 SHOT 编号，含起幅、唯一动作、终点。</div></div>
+      <div class="row"><div class="rk">硬规则</div><div class="rv"><b>单镜时长不超过 15 秒（含 15 秒）</b>，分镜时长要在模型原生时长范围内；先分析空间几何再执行，不机械照搬。</div></div>
+      <div class="row"><div class="rk">操作步骤</div><div class="rv"><ul>
+        <li>读取模型原生时长，自检上一段结束的机位、朝向、站位。</li>
+        <li>逐镜设计景别、机位角度、起幅、唯一动作与终点。</li>
+        <li>写冻结关键帧，再回填图片提示词项、参考图、视觉依据三类依据。</li>
+      </ul></div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>SHOT-EP001-001"门外停步"写清起点（手悬门把）→ 触发（玻璃落地声）→ 终点（手收回、视线转向门缝），视觉依据逐字回填人物与地点，机位角度单独标注，不沿用母版默认机位。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc reveal" id="s6">
+    <div class="acc-head"><div class="acc-num">6</div><div class="htxt"><h4>视频提示词</h4><div class="meta">调用 Skill：short-drama-video-prompts · 产出：视频提示词.md</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">把已确认镜头和起始帧写成与 SHOT 一一对应的 MOTION 提示词，描述运动链、表演、运镜、声音，可直接复制。</div></div>
+      <div class="tabs">
+        <div class="tab-bar">
+          <button class="tab-btn active" type="button" data-tab="t2v">图生视频（有参考图）</button>
+          <button class="tab-btn" type="button" data-tab="tv">文生视频（无参考图）</button>
+        </div>
+        <div class="tab-pane active" id="t2v">
+          <p>有真实 REF 或 PLAN 时走图生视频，原样携带参考槽位、顺序、用途与控制范围，正文只重述运动所需的局部起点和防漂移事实。</p>
+        </div>
+        <div class="tab-pane" id="tv">
+          <p>只有创作者<b>明确选择</b>文生时才走此路径，正文必须自足包含人物、造型、地点、构图、光线等静态视觉锚点，不能用"保持已有外观"代替模型没收到的图。</p>
+        </div>
+      </div>
+      <div class="row"><div class="rk">关键红线</div><div class="rv">普通的"无参考图"表示<b>待补</b>，不是文生授权；"待补"会阻止最终视频提示词，必须先刷新参考绑定。</div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>每个 MOTION 与 SHOT 对应，引用的中文（如台词）都能在剧本或视觉设定里找到原字；正文明确"不生成非画内字幕/对白文字叠加"，让对白只通过声音和口型发生。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc reveal" id="s7">
+    <div class="acc-head"><div class="acc-num">7</div><div class="htxt"><h4>生产执行</h4><div class="meta">调用 Skill：short-drama-produce · 产出：制作成果/ 下的图片与视频</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">在创作者明确确认后，把已写好的生产规格安全送到 adapter，执行图片、视频、TTS 或音乐生产并落回项目。</div></div>
+      <div class="row"><div class="rk">硬闸门（不可合并）</div><div class="rv"><ul>
+        <li><b>prepare</b>：建立有边界的 job，展示完整预览（数量、提示词、参考绑定、输出）。</li>
+        <li><b>确认</b>：创作者看到预览后明确同意，"继续/预算没问题"不算确认。</li>
+        <li><b>run</b>：执行生产，成功或失败后再次执行都要重新确认。</li>
+      </ul></div></div>
+      <div class="row"><div class="rk">边界</div><div class="rv">不代替创作者填写确认；job 的 source 指向拥有提示词的 Markdown，输出写到对应集的制作成果目录。</div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例</div><p>图片 job 用图片提示词.md 的 IMG 选择器取首帧，视频 job 用视频提示词.md 的 MOTION；本地参考图按 base64 直接送出，PLAN 类（图在项目外）无法进入生产，需先放进项目改成 REF。</p></div>
+    </div></div>
+  </div>
+
+  <div class="acc manual reveal" id="s8">
+    <div class="acc-head"><div class="acc-num">8</div><div class="htxt"><h4>人工剪辑（关键岗位）</h4><div class="meta">由剪辑师手动完成 · 工具：剪映 / Premiere Pro / After Effects / Audition · 产出：剪辑单.md 与成片</div></div><div class="chev">▾</div></div>
+    <div class="acc-body"><div class="acc-inner">
+      <div class="row"><div class="rk">核心职责</div><div class="rv">剪辑是<b>人工二度创作</b>，把逐镜素材装配成成片，决定叙事节奏与观感；配音、字幕、音效、特效、转场、调色全部由剪辑师手动完成，不调用 AI 自动剪辑。</div></div>
+      <div class="row"><div class="rk">剪辑流程</div><div class="rv">
+        <div class="grid g4" style="margin-top:6px">
+          <div class="card" style="padding:16px"><h4 style="font-size:16px">① 素材整理</h4><p style="font-size:13.5px">分类归档、规范命名、备份，挑双镜头、剔除废卡。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:16px">② 粗剪</h4><p style="font-size:13.5px">按分镜顺序拼接，确认故事成立、逻辑通顺。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:16px">③ 精剪</h4><p style="font-size:13.5px">逐帧精修，修正衔接、消除穿帮，切点精准。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:16px">④ 节奏卡点</h4><p style="font-size:13.5px">强化 3 秒钩子、反转与情绪节点，贴合观看习惯。</p></div>
+        </div>
+      </div></div>
+      <div class="row"><div class="rk">声音与画面包装</div><div class="rv">
+        <div class="grid g3" style="margin-top:6px">
+          <div class="card" style="padding:16px"><h4 style="font-size:15.5px">人声 / 配音</h4><p style="font-size:13.5px">逐镜核对音画同步、口型，做降噪，按情绪匹配语气。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:15.5px">字幕包装</h4><p style="font-size:13.5px">黑体/圆体、白字黑边、下方不挡脸，校对错别字。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:15.5px">音效 / BGM</h4><p style="font-size:13.5px">按节奏卡点，音量低于人声，环境音摆脱塑料感。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:15.5px">转场</h4><p style="font-size:13.5px">硬切为主，情绪转折用淡入淡出，不用花哨转场。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:15.5px">特效 / 包装</h4><p style="font-size:13.5px">加简单特效、字幕动画、片头片尾与 Logo，统一风格。</p></div>
+          <div class="card" style="padding:16px"><h4 style="font-size:15.5px">调色 / 导出</h4><p style="font-size:13.5px">统一色调、降噪，按 1080P、9:16、MP4 导出。</p></div>
+        </div>
+      </div></div>
+      <div class="row"><div class="rk">权责边界</div><div class="rv">删镜、缩镜、调顺序、做包装属于剪辑师的<b>取舍</b>；但改台词、改镜头职责、改故事，要回到对应上游工位，不能在剪辑台上擅自改写。</div></div>
+      <div class="instance"><div class="lab">《小满食舍》实例 · 音量平衡（专业参数）</div><p>三层音轨手工平衡：<b>人声约 -6dB、背景音乐约 -18dB、环境音约 -24dB</b>；暖黄灶火与清晨灰白的色调调色统一，最终成片输出到"制作成果/成片/"。</p></div>
+    </div></div>
+  </div>
+
+</section>
+
+<!-- ============ 多对话传参 ============ -->
+<section class="block" id="handoff">
+  <span class="sec-tag">Handoff · 多对话传参</span>
+  <h2 class="sec-title">一个工位一个对话，靠文件交接</h2>
+  <p class="lead">每个独立对话只专注一个职责，上下文干净；<b>不靠记忆转述，而是读上游落盘文件</b>，通过稳定 ID 引用。</p>
+  <div class="tbl-wrap reveal">
+    <table class="t">
+      <thead><tr><th>上游产物</th><th>交给下游</th><th>交接方式</th></tr></thead>
+      <tbody>
+        <tr><td>分集地图</td><td>编剧</td><td>读本集进入状态、目标、转折，写剧本.md</td></tr>
+        <tr><td>剧本.md</td><td>视觉设定 / 分镜</td><td>拆实体、设计镜头，引用场次号</td></tr>
+        <tr><td>视觉设定.md</td><td>图片/视频提示词</td><td>按 LOCK 锁面逐字带走，视觉依据回填</td></tr>
+        <tr><td>图片提示词.md</td><td>分镜 / 生产</td><td>用 IMG 编号查找，生产取首帧</td></tr>
+        <tr><td>分镜.md</td><td>视频提示词</td><td>每个 MOTION 对应一个 SHOT</td></tr>
+        <tr><td>视频提示词.md</td><td>生产执行</td><td>用 MOTION 选择器，参考绑定一起送</td></tr>
+        <tr><td>制作成果/素材</td><td>剪辑师（人工）</td><td>读真实文件，按剧本分镜核对叙事</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g3 reveal">
+    <div class="card card-hover"><h4>原则一：单职责</h4><p>一个对话只做一个工位，避免上下文混杂导致输出漂移。</p></div>
+    <div class="card card-hover"><h4>原则二：先读再做</h4><p>新对话先读上游文件，不凭记忆和想象补事实。</p></div>
+    <div class="card card-hover"><h4>原则三：文件为准</h4><p>所有交接以落盘文档为权威，口头和记忆不作数。</p></div>
+  </div>
+</section>
+
+<!-- ============ 质量门禁 ============ -->
+<section class="block" id="gate">
+  <span class="sec-tag">Quality Gate · 质量门禁</span>
+  <h2 class="sec-title">两类脚本，把错误拦在投产之前</h2>
+  <div class="grid g2 reveal">
+    <div class="card">
+      <h4>跨文档结构校验</h4>
+      <div class="codewrap"><button class="copy-btn" type="button">复制</button><div class="codeblock" style="font-size:14px">python3 creator_markdown_check.py \
+  剧集/EP001 --project-root .</div></div>
+      <p style="font-size:14.5px">机械核对画面代称、视觉依据、连续性锁、REF/PLAN、ID 引用是否一致。</p>
+    </div>
+    <div class="card">
+      <h4>视频提示词静态回归</h4>
+      <div class="codewrap"><button class="copy-btn" type="button">复制</button><div class="codeblock" style="font-size:14px">python3 视频提示词质量门.py \
+  &lt;提示词文件.md&gt; --total 90</div></div>
+      <p style="font-size:14.5px">通过标准：全部检查 ERROR 数 = 0，WARNING 仅提示。</p>
+    </div>
+  </div>
+  <h3 class="sub">门禁阈值（项目真实配置）</h3>
+  <div class="tbl-wrap reveal">
+    <table class="t">
+      <thead><tr><th>检查项</th><th>字符数</th><th>检查项</th><th>字符数</th></tr></thead>
+      <tbody>
+        <tr><td>全段最小字符</td><td class="c">2800</td><td>开场总述</td><td class="c">300</td></tr>
+        <tr><td>参考素材定义（总/每张）</td><td class="c">480 / 70</td><td>世界空间</td><td class="c">220</td></tr>
+        <tr><td>视听执行预设</td><td class="c">140</td><td>表演连续性</td><td class="c">140</td></tr>
+        <tr><td>每个子镜总字符</td><td class="c">430</td><td>高风险约束</td><td class="c">240</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g2 reveal">
+    <div class="card"><h4>拦截"偷懒继承"</h4><p>自动拦截"继承上段/同上/承接上段"等不写事实的表述，要求每段自足描述。</p></div>
+    <div class="card"><h4>拦截风险词</h4><p>拦截割手、出血、伤口等高风险词，符合内容安全规范，不绕过。</p></div>
+  </div>
+</section>
+
+<!-- ============ 规范迭代 ============ -->
+<section class="block" id="iterate">
+  <span class="sec-tag">Iteration · 规范迭代</span>
+  <h2 class="sec-title">规范不是模板，要持续进化</h2>
+  <p class="lead">复盘文档是基础而非一成不变，AI 应主动分析、理解并完善工作逻辑，而不是机械照搬。</p>
+  <div class="flow reveal" style="flex-wrap:nowrap">
+    <div class="fnode" style="cursor:default"><div class="ic">🔍</div><h5>① 发现问题</h5><p>项目中暴露的偏差与返工点</p></div>
+    <div class="fnode" style="cursor:default"><div class="ic">📝</div><h5>② 复盘记录</h5><p>写入规范约束文档，对比自检</p></div>
+    <div class="fnode" style="cursor:default"><div class="ic">🔧</div><h5>③ 更新规范</h5><p>调整流程、约束与质量标准</p></div>
+    <div class="fnode" style="cursor:default"><div class="ic">🧪</div><h5>④ 验证固化</h5><p>新项目验证后沉淀为新基线</p></div>
+  </div>
+  <div class="grid g2 reveal">
+    <div class="card"><h4>动态调整范围</h4><p>工作流、规范、约束、质量标准都可在项目过程中优化，调整项留痕可追溯。</p></div>
+    <div class="card"><h4>闭环要求</h4><p>每次更新都要对比自检，验证有效后再作为默认做法，避免随意改动。</p></div>
+  </div>
+</section>
+
+<!-- ============ Skill 全景 ============ -->
+<section class="block" id="skillmap">
+  <span class="sec-tag">Skill Map · 技能全景</span>
+  <h2 class="sec-title">一套 Skill，分层支撑各工位</h2>
+  <div class="tbl-wrap reveal">
+    <table class="t">
+      <thead><tr><th style="width:110px">分层</th><th>包含 Skill 及作用</th></tr></thead>
+      <tbody>
+        <tr><td><b>路由层</b></td><td>short-drama（初始化/路由/Dashboard）、ai-drama-pipeline（端到端编排）、topdown-blocking（俯视站位图）、novel-analyze（长篇拆解）</td></tr>
+        <tr><td><b>创作层</b></td><td>develop（简报/引擎/分集）、write（剧本）、assets（视觉设定）、storyboard（分镜关键帧）</td></tr>
+        <tr><td><b>生产层</b></td><td>image-prompts（图片提示词）、video-prompts（视频提示词）、produce（确认后生产执行）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="instance reveal"><div class="lab">特别说明</div><p>上图都是 AI 侧 Skill；<b>剪辑不在其中</b>——它是人工剪辑师岗位，由人使用剪映 / Premiere / AE 手动完成，是工作流里不可替代的关键环节。</p></div>
+</section>
+
+<!-- ============ 上手清单（可勾选） ============ -->
+<section class="block" id="checklist-sec">
+  <span class="sec-tag">Hands-on · 从零上手</span>
+  <h2 class="sec-title">照着这 10 步走，就能启动一部短剧</h2>
+  <p class="lead">勾选状态会自动保存在你的浏览器里，下次打开仍在；最后一步为人工岗位。</p>
+  <div class="checklist reveal" id="checklist">
+    <label class="ci"><input type="checkbox" data-key="c0"><span class="box"></span><span class="txt">一次问清 8 项信息（点子、题材、集数×时长、画幅、风格、路径……）</span><span class="tag">准备</span></label>
+    <label class="ci"><input type="checkbox" data-key="c1"><span class="box"></span><span class="txt">运行 project_tool.py init 初始化，确定参数一次带上</span><span class="tag">工位 0</span></label>
+    <label class="ci"><input type="checkbox" data-key="c2"><span class="box"></span><span class="txt">用 develop 产出创作简报、故事引擎、分集地图</span><span class="tag">工位 1</span></label>
+    <label class="ci"><input type="checkbox" data-key="c3"><span class="box"></span><span class="txt">用 write 写 EP001 剧本，规范标签、去 AI 味</span><span class="tag">工位 2</span></label>
+    <label class="ci"><input type="checkbox" data-key="c4"><span class="box"></span><span class="txt">用 assets 拆视觉设定，写识别锚点和连续性锁</span><span class="tag">工位 3</span></label>
+    <label class="ci"><input type="checkbox" data-key="c5"><span class="box"></span><span class="txt">用 image-prompts 写角色板/场景板提示词</span><span class="tag">工位 4</span></label>
+    <label class="ci"><input type="checkbox" data-key="c6"><span class="box"></span><span class="txt">用 storyboard 做分镜和冻结关键帧（单镜 ≤15 秒）</span><span class="tag">工位 5</span></label>
+    <label class="ci"><input type="checkbox" data-key="c7"><span class="box"></span><span class="txt">先定视频模型，再用 video-prompts 写视频提示词</span><span class="tag">工位 6</span></label>
+    <label class="ci"><input type="checkbox" data-key="c8"><span class="box"></span><span class="txt">用 produce：prepare 预览 → 确认 → run 生产素材</span><span class="tag">工位 7</span></label>
+    <label class="ci"><input type="checkbox" data-key="c9"><span class="box"></span><span class="txt">剪辑师人工粗剪+精剪，配音、字幕、音效、转场、调色后导出成片</span><span class="tag manual">人工</span></label>
+  </div>
+  <button class="reset-check" id="resetCheck" type="button">↺ 清空所有勾选</button>
+</section>
+
+<!-- ============ 红线避坑 ============ -->
+<section class="block" id="redlines">
+  <span class="sec-tag">Red Lines · 红线避坑</span>
+  <h2 class="sec-title">这六条红线，一条都不能碰</h2>
+  <div class="grid g3 reveal">
+    <div class="card" style="border-top:4px solid var(--bad)"><h4>不靠记忆假设</h4><p>新对话先读上游文件，不凭记忆和想象补事实。</p></div>
+    <div class="card" style="border-top:4px solid var(--bad)"><h4>不把"无参考图"当文生授权</h4><p>普通"无"表示待补，只有明确选择才走文生。</p></div>
+    <div class="card" style="border-top:4px solid var(--bad)"><h4>不绕质量门强行续跑</h4><p>校验不过就停下修正，通过后再进下一阶段。</p></div>
+    <div class="card" style="border-top:4px solid var(--bad)"><h4>单镜不超过 15 秒</h4><p>这是硬性规则，分镜时长要在模型原生范围内。</p></div>
+    <div class="card" style="border-top:4px solid var(--bad)"><h4>不替创作者确认生产</h4><p>"继续/预算没问题"不算确认，不得代填。</p></div>
+    <div class="card" style="border-top:4px solid var(--bad)"><h4>不擅自加台词/改设定</h4><p>引用的中文必须能在剧本或视觉设定里找到原字。</p></div>
+  </div>
+</section>
+
+<!-- ============ 传统 vs AI ============ -->
+<section class="block" id="compare">
+  <span class="sec-tag">Comparison · 横向对位</span>
+  <h2 class="sec-title">从"实拍剧组"到"智能协作"</h2>
+  <div class="grid g2 reveal">
+    <div class="card" style="border-top:4px solid var(--bad)">
+      <h4 style="color:var(--bad)">传统真人短剧</h4>
+      <ul style="padding-left:20px;margin-top:10px">
+        <li>40~60 人剧组，劳动密集</li>
+        <li>量产 20~40 天，精品 2~4 个月</li>
+        <li>普通成本 30~40 万，精品可达数百万</li>
+        <li>实拍 7~15 天，日均 14~16 小时</li>
+        <li>资产一次性消耗，重拍成本高</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:4px solid var(--good)">
+      <h4 style="color:var(--good)">AI 智能协作</h4>
+      <ul style="padding-left:20px;margin-top:10px">
+        <li>3~8 人（核心 3 人：导演/抽卡师/后期），含人工剪辑</li>
+        <li>数天周期，无需实拍现场</li>
+        <li>主要为算力成本，视频生成约 1~1.2 元/秒</li>
+        <li>无现场高强度作业，约半数镜头需抽卡</li>
+        <li>资产可复用、可批量、可沉淀</li>
+      </ul>
+    </div>
+  </div>
+  <p class="reveal" style="font-size:14.5px;margin-top:16px">数据来源：澎湃新闻、人民日报、人民网等公开报道（2025-2026）。AI 并非取代所有人，而是把人从重复劳动中解放，聚焦创意、决策与人工剪辑等关键环节。</p>
+</section>
+
+<!-- ============ 结尾 ============ -->
+<section class="block" id="end" style="text-align:center;padding-bottom:40px">
+  <span class="sec-tag">Start · 现在开始</span>
+  <h2 class="sec-title" style="font-size:44px">从确认一个<br><span style="background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent">故事点子</span>开始</h2>
+  <p class="lead" style="max-width:640px;margin:0 auto 30px">回到顶部，用侧边导航按顺序走一遍。第一次不必追求完美，先跑通一个工位、产出一份文档，再往下推进。</p>
+  <a class="btn btn-primary" data-target="hero">↑ 回到开篇，从头开始</a>
+  <div class="badges" style="justify-content:center">
+    <span class="badge">快 · 周期以天计</span>
+    <span class="badge">省 · 人力集约</span>
+    <span class="badge">稳 · 质量门兜底</span>
+  </div>
+  <p style="font-size:13.5px;color:var(--text-3);margin-top:40px">市场运营部 · 潘锐 · AI 短剧智能协作工作流白皮书（交互式 SOP）</p>
+</section>
+
+</div>
+</div>
+<button id="toTop" title="回到顶部">↑</button>
+<script>
+/* ============ AI 短剧白皮书 · 交互逻辑 ============ */
+(function(){
+  'use strict';
+
+  /* ---------- 1. 平滑滚动（所有 data-target） ---------- */
+  function scrollToId(id){
+    var el = document.getElementById(id);
+    if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); }
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('[data-target]');
+    if(t){ e.preventDefault(); scrollToId(t.getAttribute('data-target')); }
+  });
+
+  /* ---------- 2. 折叠面板 Accordion ---------- */
+  var accs = document.querySelectorAll('.acc');
+  accs.forEach(function(acc){
+    var head = acc.querySelector('.acc-head');
+    var body = acc.querySelector('.acc-body');
+    head.addEventListener('click', function(){
+      var isOpen = acc.classList.contains('open');
+      if(isOpen){
+        acc.classList.remove('open');
+        body.style.maxHeight = null;
+      }else{
+        acc.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+  // 窗口尺寸变化时，重新计算已展开面板高度
+  window.addEventListener('resize', function(){
+    accs.forEach(function(acc){
+      if(acc.classList.contains('open')){
+        acc.querySelector('.acc-body').style.maxHeight = 'none';
+        var h = acc.querySelector('.acc-body').scrollHeight;
+        acc.querySelector('.acc-body').style.maxHeight = h + 'px';
+      }
+    });
+  });
+
+  /* ---------- 3. 标签页 Tabs ---------- */
+  document.querySelectorAll('.tabs').forEach(function(tabGroup){
+    var btns = tabGroup.querySelectorAll('.tab-btn');
+    var panes = tabGroup.querySelectorAll('.tab-pane');
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        btns.forEach(function(b){ b.classList.remove('active'); });
+        panes.forEach(function(p){ p.classList.remove('active'); });
+        btn.classList.add('active');
+        var pane = document.getElementById(btn.getAttribute('data-tab'));
+        if(pane){ pane.classList.add('active'); }
+      });
+    });
+  });
+
+  /* ---------- 4. 代码一键复制 ---------- */
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var wrap = btn.closest('.codewrap');
+      var code = wrap.querySelector('.codeblock');
+      var text = code ? code.innerText : '';
+      function done(){
+        var old = btn.innerText;
+        btn.innerText = '✓ 已复制';
+        btn.classList.add('done');
+        setTimeout(function(){ btn.innerText = old; btn.classList.remove('done'); }, 1600);
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text); done(); });
+      }else{
+        fallbackCopy(text); done();
+      }
+    });
+  });
+
+  /* ---------- 5. 清单 localStorage 记忆 ---------- */
+  var STORE_KEY = 'drama_sop_checklist_v1';
+  var boxes = document.querySelectorAll('#checklist input[type=checkbox]');
+  function loadState(){
+    var saved = {};
+    try{ saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); }catch(e){ saved = {}; }
+    boxes.forEach(function(box){
+      var k = box.getAttribute('data-key');
+      if(saved[k]){ box.checked = true; }
+    });
+  }
+  function saveState(){
+    var data = {};
+    boxes.forEach(function(box){ data[box.getAttribute('data-key')] = box.checked; });
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}
+  }
+  boxes.forEach(function(box){ box.addEventListener('change', saveState); });
+  loadState();
+  var resetBtn = document.getElementById('resetCheck');
+  if(resetBtn){
+    resetBtn.addEventListener('click', function(){
+      boxes.forEach(function(box){ box.checked = false; });
+      saveState();
+    });
+  }
+
+  /* ---------- 6. 顶部进度条 & 回到顶部 ---------- */
+  var progress = document.getElementById('progress');
+  var toTop = document.getElementById('toTop');
+  function onScroll(){
+    var docH = document.documentElement.scrollHeight - window.innerHeight;
+    var y = window.scrollY || document.documentElement.scrollTop;
+    var pct = docH > 0 ? (y / docH) * 100 : 0;
+    progress.style.width = pct + '%';
+    if(y > 500){ toTop.classList.add('show'); }else{ toTop.classList.remove('show'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  toTop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  /* ---------- 7. 滚动进入动画 ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+    revealEls.forEach(function(el){ io.observe(el); });
+  }else{
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---------- 8. Scrollspy 侧边导航高亮 ---------- */
+  var navLinks = document.querySelectorAll('.sidebar .nav-link');
+  var spySections = [];
+  navLinks.forEach(function(link){
+    var id = link.getAttribute('data-target');
+    var sec = document.getElementById(id);
+    if(sec){ spySections.push({id:id, el:sec, link:link}); }
+  });
+  function setActive(id){
+    navLinks.forEach(function(l){ l.classList.remove('active'); });
+    var hit = document.querySelector('.sidebar .nav-link[data-target="'+id+'"]');
+    if(hit){ hit.classList.add('active'); }
+  }
+  if('IntersectionObserver' in window){
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ setActive(entry.target.id); }
+      });
+    }, {rootMargin:'-15% 0px -70% 0px', threshold:0});
+    spySections.forEach(function(s){ spy.observe(s.el); });
+  }
+
+})();
+</script>
+</body>
+</html>
