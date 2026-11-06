@@ -116,6 +116,22 @@ td:first-child .risk{font-size:inherit;line-height:inherit;font-weight:500;color
 .doc-link{color:var(--accent-d);text-decoration:underline;text-decoration-color:var(--accent-line);text-underline-offset:3px;transition:text-decoration-color .15s var(--ease)}
 .doc-link:hover{text-decoration-color:currentColor}
 
+/* 宽表格横向滑动提示：边缘渐隐阴影 + 提示文字（只在表格放不下时出现） */
+.tw-shell{margin:16px 0}
+.tw-shell>.tw-frame>.table-wrap{margin:0}
+.tw-frame{position:relative}
+.tw-frame::before,.tw-frame::after{content:'';position:absolute;top:1px;bottom:1px;width:28px;z-index:2;
+  pointer-events:none;opacity:0;transition:opacity .2s var(--ease)}
+.tw-frame::before{left:1px;border-radius:11px 0 0 11px;background:linear-gradient(to right,rgba(17,24,39,.13),rgba(17,24,39,0))}
+.tw-frame::after{right:1px;border-radius:0 11px 11px 0;background:linear-gradient(to left,rgba(17,24,39,.13),rgba(17,24,39,0))}
+.tw-shell.can-left .tw-frame::before,.tw-shell.can-right .tw-frame::after{opacity:1}
+.tw-hint{display:none;align-items:center;justify-content:flex-end;gap:4px;margin-bottom:4px;
+  font-size:12px;line-height:16px;color:var(--muted);transition:opacity .2s var(--ease)}
+.tw-hint svg{width:14px;height:14px}
+.tw-shell.scrollable .tw-hint{display:flex}
+.tw-shell.touched .tw-hint{opacity:0;visibility:hidden}
+.pdf-part .tw-hint,.pdf-part .tw-frame::before,.pdf-part .tw-frame::after{display:none!important}
+
 /* 4.1 选取标准清单 */
 .criteria{list-style:none;margin:16px 0;padding:4px 20px;background:var(--surface);
   border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
@@ -194,6 +210,7 @@ td:first-child .risk{font-size:inherit;line-height:inherit;font-weight:500;color
   tr,.card,.criteria li,.arch,.timeline,.meta-row,.note,.law-list li{break-inside:avoid}
   .section-title,.section-subtitle{break-after:avoid}
   thead{display:table-header-group}
+  .tw-hint,.tw-frame::before,.tw-frame::after{display:none!important}
 }
 
 @media screen and (max-width:800px){
@@ -1000,7 +1017,7 @@ function buildParts() {
   parts.forEach(part => {
     part.querySelectorAll('.section-title, .section-subtitle').forEach(h => {
       const next = h.nextElementSibling;
-      if (!next || !next.matches('.table-wrap, .card, .criteria, .arch, .timeline')) return;
+      if (!next || !next.matches('.tw-shell, .table-wrap, .card, .criteria, .arch, .timeline')) return;
       const keep = document.createElement('div');
       keep.className = 'pdf-keep';
       h.before(keep);
@@ -1009,6 +1026,36 @@ function buildParts() {
   });
   return parts;
 }
+
+// 宽表格横向滑动提示：右边还有内容时显示右侧阴影，滑离最左侧时显示左侧阴影；
+// 首次滑动后隐藏提示文字
+const HINT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+const tableShells = [...document.querySelectorAll('.main .table-wrap')].map(wrap => {
+  const shell = document.createElement('div');
+  shell.className = 'tw-shell';
+  const hint = document.createElement('div');
+  hint.className = 'tw-hint';
+  hint.innerHTML = '<span>左右滑动查看全部</span>' + HINT_ICON;
+  const frame = document.createElement('div');
+  frame.className = 'tw-frame';
+  wrap.before(shell);
+  frame.appendChild(wrap);
+  shell.append(hint, frame);
+  const update = () => {
+    const max = wrap.scrollWidth - wrap.clientWidth;
+    shell.classList.toggle('scrollable', max > 2);
+    shell.classList.toggle('can-left', wrap.scrollLeft > 2);
+    shell.classList.toggle('can-right', wrap.scrollLeft < max - 2);
+  };
+  wrap.addEventListener('scroll', () => {
+    if (wrap.scrollLeft > 8) shell.classList.add('touched');
+    update();
+  }, { passive: true });
+  return update;
+});
+const updateShells = () => tableShells.forEach(fn => fn());
+updateShells();
+window.addEventListener('resize', updateShells);
 
 const pdfBtn = document.getElementById('pdfBtn');
 pdfBtn.addEventListener('click', async () => {
